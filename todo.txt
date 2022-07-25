@@ -1,0 +1,14 @@
+1. maybe??
+	create bs4 twitter web scraper
+		target geolocation
+		save scraped tweets as .json to tweets.jsonl
+
+2. pass tweets.jsonl/tweets.csv to content_to_classify in sentiment.py
+
+3. Create main() module that runs all other modules
+	-- top level code module
+
+
+notes:
+
+moderation.py contains code straight from openai's website that parses using the API
