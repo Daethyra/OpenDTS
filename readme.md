@@ -1,0 +1,3 @@
+# OpenDTS
+
+The program is a sentiment analysis program for Twitter that uses the Vader Sentiment Analysis library and the Tweepy library to scrape tweets and analyze the sentiments of tweets based on a list of keywords. The keywords and corresponding sentiment scores are stored in an SQLite database. The program uses multithreading for sentiment analysis and has a cache mechanism that saves the results of the analysis to a file for a certain period of time to reduce processing time. The program also has real-time updates to the keyword list and improved error handling, as well as logging to aid in debugging and monitoring the performance of the program.
