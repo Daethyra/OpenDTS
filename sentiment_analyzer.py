@@ -1,46 +1,67 @@
-import multiprocessing
 import vaderSentiment
-import pickle
-import os
-import time
+import tweepy
+import logging
+import traceback
+import csv
 
-class SentimentAnalysis:
-    def __init__(self, tweets):
-        self.tweets = tweets
-        self.results = []
-        self.cache_file = "sentiment_analysis_cache.pkl"
-        self.cache_expiration = 60 # cache expires after 60 seconds
+def scrape_tweets(keywords):
+    try:
+        # Authenticate to Twitter
+        auth = tweepy.OAuth1UserHandler(
+            consumer_key,
+            consumer_secret,
+            access_token,
+            access_token_secret
+        )
 
-    def analyze_sentiment(self, tweet):
-        analyzer = vaderSentiment.SentimentIntensityAnalyzer()
-        sentiment = analyzer.polarity_scores(tweet)
-        return sentiment
+        # Create API object
+        api = tweepy.API(auth)
 
-    def analyze_sentiments_multiprocessing(self):
-        """
-        Analyze the sentiment of the tweets using the vaderSentiment library
-        and multiprocessing. The results are stored in the "results" instance
-        variable.
-        """
-        with multiprocessing.Pool() as pool:
-            self.results = pool.map(self.analyze_sentiment, self.tweets)
-        self.save_to_cache()
+        # Initialize a list to store the tweets
+        tweets = []
 
-    def save_to_cache(self):
-        """
-        Save the sentiment analysis results to a cache file. This cache file is
-        stored as a pickle file and can be loaded later to avoid repeating
-        sentiment analysis.
-        """
-        with open(self.cache_file, "wb") as f:
-            pickle.dump((self.results, time.time()), f)
+        # Scrape tweets using the keywords
+        for keyword in keywords:
+            tweets_for_keyword = api.search(q=keyword, count=100)
+            for tweet in tweets_for_keyword:
+                tweets.append(tweet)
 
-    def load_from_cache(self):
-        """
-        Load the sentiment analysis results from the cache file if the cache
-        file exists and has not expired.
-        """
-        if os.path.exists(self.cache_file):
-            with open(self.cache_file, "rb") as f:
-                data = pickle.load(f)
-                if
+        return tweets
+    except Exception as e:
+        logging.error(f"An error occurred while scraping tweets: {e}")
+        logging.error(traceback.format_exc())
+        raise e
+
+def analyze_sentiment(tweets):
+    try:
+        # Initialize the SentimentIntensityAnalyzer
+        vader = vaderSentiment.SentimentIntensityAnalyzer()
+
+        # Initialize a list to store the sentiment results
+        sentiment_results = []
+
+        # Analyze the sentiment of each tweet
+        for tweet in tweets:
+            sentiment = vader.polarity_scores(tweet.text)
+            if sentiment['compound'] < -0.7:
+                sentiment_results.append({'text': tweet.text, 'username': tweet.user.screen_name, 'sentiment': sentiment})
+
+        return sentiment_results
+    except Exception as e:
+        logging.error(f"An error occurred while analyzing sentiment: {e}")
+        logging.error(traceback.format_exc())
+        raise e
+
+def save_to_csv(sentiment_results):
+    try:
+        with open('sentiment_analysis.csv', 'w', newline='') as csvfile:
+            fieldnames = ['username', 'text', 'sentiment']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+            writer.writeheader()
+            for result in sentiment_results:
+                writer.writerow({'username': result['username'], 'text': result['text'], 'sentiment': result['sentiment']})
+    except Exception as e:
+        logging.error(f"An error occurred while saving to CSV: {e}")
+        logging.error(traceback.format_exc())
+        raise e
