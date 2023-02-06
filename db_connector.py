@@ -1,42 +1,57 @@
-import sqlite3
+import logging
+import traceback
+from functools import lru_cache
 
-def connect_db():
+@lru_cache(maxsize=2000)
+def get_sentiment_results():
     """
-    Connect to the SQLite database where keywords are stored
+    This function retrieves sentiment analysis results from the database.
+    The results are cached using `lru_cache` to optimize performance.
     """
-    conn = sqlite3.connect("keywords.db")
-    return conn
+    try:
+        # Connect to the database
+        conn = connect_to_db()
+        cursor = conn.cursor()
 
-def create_table():
-    """
-    Create the keywords table if it doesn't already exist in the database
-    """
-    conn = connect_db()
-    c = conn.cursor()
-    c.execute("""CREATE TABLE IF NOT EXISTS keywords (
-        keyword TEXT PRIMARY KEY,
-        sentiment REAL
-    )""")
-    conn.commit()
-    conn.close()
+        # Query the database for the sentiment results
+        query = "SELECT * FROM sentiment_analysis_results"
+        cursor.execute(query)
+        sentiment_results = cursor.fetchall()
 
-def add_keyword(keyword, sentiment):
-    """
-    Add or update a keyword in the database with its sentiment score
-    """
-    conn = connect_db()
-    c = conn.cursor()
-    c.execute("INSERT OR REPLACE INTO keywords (keyword, sentiment) VALUES (?, ?)", (keyword, sentiment))
-    conn.commit()
-    conn.close()
+        # Close the database connection
+        cursor.close()
+        conn.close()
 
+        return sentiment_results
+    except Exception as e:
+        # Log the error message and stack trace in case of any exceptions
+        logging.error(f"An error occurred while fetching sentiment results: {e}")
+        logging.error(traceback.format_exc())
+        raise e
+
+@lru_cache(maxsize=2000)
 def get_keywords():
     """
-    Retrieve all keywords from the database
+    This function retrieves keywords from the database.
+    The results are cached using `lru_cache` to optimize performance.
     """
-    conn = connect_db()
-    c = conn.cursor()
-    c.execute("SELECT keyword, sentiment FROM keywords")
-    keywords = c.fetchall()
-    conn.close()
-    return keywords
+    try:
+        # Connect to the database
+        conn = connect_to_db()
+        cursor = conn.cursor()
+
+        # Query the database for the keywords
+        query = "SELECT keywords FROM keyword_list"
+        cursor.execute(query)
+        keywords = cursor.fetchall()
+
+        # Close the database connection
+        cursor.close()
+        conn.close()
+
+        return keywords
+    except Exception as e:
+        # Log the error message and stack trace in case of any exceptions
+        logging.error(f"An error occurred while fetching keywords: {e}")
+        logging.error(traceback.format_exc())
+        raise e
