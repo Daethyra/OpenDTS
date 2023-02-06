@@ -19,7 +19,7 @@ def main():
     if days_old >= 7:
         archive_log_file(log_file)
         open(log_file, "w").close()
-    
+
     while True:
         print("1. Scrape tweets and update sentiment analysis results")
         print("2. View current sentiment analysis results")
@@ -28,43 +28,38 @@ def main():
 
         choice = input("Enter your choice: ")
 
-        if choice == '1':
+        if choice in ('1', '2', '3'):
             try:
-                # Get the keywords from the database
-                keywords = db_connector.get_keywords()
+                if choice == '1':
+                    # Get the keywords from the database
+                    keywords = db_connector.get_keywords()
 
-                # Scrape tweets using the keywords
-                tweets = sentiment_analyzer.scrape_tweets(keywords)
+                    # Scrape tweets using the keywords
+                    tweets = sentiment_analyzer.scrape_tweets(keywords)
 
-                # Analyze the sentiment of the tweets
-                sentiment_results = sentiment_analyzer.analyze_sentiment(tweets)
+                    # Analyze the sentiment of the tweets
+                    sentiment_results = sentiment_analyzer.analyze_sentiment(tweets)
 
-                # Update the sentiment analysis results in the database
-                db_connector.update_sentiment_results(sentiment_results)
-                logging.info("Sentiment analysis results updated successfully.")
+                    # Update the sentiment analysis results in the database
+                    db_connector.update_sentiment_results(sentiment_results)
+                    logging.info("Sentiment analysis results updated successfully.")
+                elif choice == '2':
+                    # Get the current sentiment analysis results from the database
+                    sentiment_results = db_connector.get_sentiment_results()
+
+                    # Print the results
+                    print(sentiment_results)
+                    logging.info("Sentiment analysis results retrieved successfully.")
+                elif choice == '3':
+                    # Get the updated keyword list from the user
+                    keywords = input("Enter the updated keyword list, separated by commas: ")
+                    keywords = keywords.split(',')
+
+                    # Update the keywords in the database
+                    db_connector.update_keywords(keywords)
+                    logging.info("Keywords updated successfully.")
             except Exception as e:
-                logging.error("Error updating sentiment analysis results: {}".format(e))
-        elif choice == '2':
-            try:
-                # Get the current sentiment analysis results from the database
-                sentiment_results = db_connector.get_sentiment_results()
-
-                # Print the results
-                print(sentiment_results)
-                logging.info("Sentiment analysis results retrieved successfully.")
-            except Exception as e:
-                logging.error("Error retrieving sentiment analysis results: {}".format(e))
-        elif choice == '3':
-            try:
-                # Get the updated keyword list from the user
-                keywords = input("Enter the updated keyword list, separated by commas: ")
-                keywords = keywords.split(',')
-
-                # Update the keywords in the database
-                db_connector.update_keywords(keywords)
-                logging.info("Keywords updated successfully.")
-            except Exception as e:
-                logging.error("Error updating keywords: {}".format(e))
+                logging.error("Error: {}".format(e), exc_info=True)
         elif choice == '4':
             break
         else:
@@ -76,3 +71,5 @@ def archive_log_file(log_file):
     archive_filename = "{}-{}-{}.log".format(log_file, now.year, now.month)
 
     # Move the log file to the archive
+    os.rename(log_file, archive_filename)
+    logging.info("Log file archived as {}".format(archive_filename))
