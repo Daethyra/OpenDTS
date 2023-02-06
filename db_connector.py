@@ -3,7 +3,7 @@ import traceback
 import pandas as pd
 from functools import lru_cache
 
-@lru_cache(maxsize=2000)
+@lru_cache(maxsize=1000)
 def get_sentiment_results():
     """
     This function retrieves sentiment analysis results from the database.
@@ -33,7 +33,7 @@ def get_sentiment_results():
         logging.error(traceback.format_exc())
         raise e
 
-@lru_cache(maxsize=2000)
+@lru_cache(maxsize=1000)
 def get_keywords():
     """
     This function retrieves keywords from the database.
