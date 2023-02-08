@@ -1,12 +1,12 @@
-# db_connector.py
-
 import logging
 import traceback
-import os
 import pandas as pd
 from functools import lru_cache
 import psycopg2
-from psycopg2 import pool
+import os
+import dotenv
+
+dotenv.load_dotenv()
 
 def connect_to_db():
     try:
@@ -14,11 +14,11 @@ def connect_to_db():
         connection_pool = psycopg2.pool.SimpleConnectionPool(
             1, # minimum number of connections in the pool
             20, # maximum number of connections in the pool
-            host=os.getenv('DB_HOST'),
-            database=os.getenv('DB_NAME'),
-            user=os.getenv('DB_USER'),
-            password=os.getenv('DB_PASSWORD'),
-            port=os.getenv('DB_PORT')
+            host=os.getenv("DB_HOST"),
+            database=os.getenv("DB_NAME"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            port=os.getenv("DB_PORT")
         )
         # Get a connection from the pool
         connection = connection_pool.getconn()
@@ -45,7 +45,7 @@ def get_sentiment_results():
         cursor.execute(query)
         sentiment_results = cursor.fetchall()
         # Convert the results to a Pandas DataFrame
-        df = pd.DataFrame(sentiment_results, columns=['username', 'text', 'sentiment'])
+        df = pd.DataFrame(sentiment_results, columns=['username', 'text', 'sentiment score'])
         # Close the database connection
         cursor.close()
         conn.close()
