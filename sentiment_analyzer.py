@@ -1,46 +1,54 @@
-import multiprocessing
-import vaderSentiment
-import pickle
+# `sentiment_analyzer.py`
+
 import os
-import time
+from dotenv import load_dotenv
+import vaderSentiment
+import tweepy
+import logging
+import traceback
+import pandas as pd
 
-class SentimentAnalysis:
-    def __init__(self, tweets):
-        self.tweets = tweets
-        self.results = []
-        self.cache_file = "sentiment_analysis_cache.pkl"
-        self.cache_expiration = 60 # cache expires after 60 seconds
+load_dotenv()
 
-    def analyze_sentiment(self, tweet):
-        analyzer = vaderSentiment.SentimentIntensityAnalyzer()
-        sentiment = analyzer.polarity_scores(tweet)
-        return sentiment
+def scrape_tweets(keywords):
+    try:
+        # Authenticate to Twitter
+        auth = tweepy.OAuth1UserHandler(
+            os.getenv('CONSUMER_KEY'),
+            os.getenv('CONSUMER_SECRET'),
+            os.getenv('ACCESS_TOKEN'),
+            os.getenv('ACCESS_TOKEN_SECRET')
+        )
 
-    def analyze_sentiments_multiprocessing(self):
-        """
-        Analyze the sentiment of the tweets using the vaderSentiment library
-        and multiprocessing. The results are stored in the "results" instance
-        variable.
-        """
-        with multiprocessing.Pool() as pool:
-            self.results = pool.map(self.analyze_sentiment, self.tweets)
-        self.save_to_cache()
+        # Create API object
+        api = tweepy.API(auth)
 
-    def save_to_cache(self):
-        """
-        Save the sentiment analysis results to a cache file. This cache file is
-        stored as a pickle file and can be loaded later to avoid repeating
-        sentiment analysis.
-        """
-        with open(self.cache_file, "wb") as f:
-            pickle.dump((self.results, time.time()), f)
+        # Initialize a list to store the tweets
+        tweets = []
 
-    def load_from_cache(self):
-        """
-        Load the sentiment analysis results from the cache file if the cache
-        file exists and has not expired.
-        """
-        if os.path.exists(self.cache_file):
-            with open(self.cache_file, "rb") as f:
-                data = pickle.load(f)
-                if
+        # Scrape tweets using the keywords
+        for keyword in keywords:
+            tweets_for_keyword = api.search(q=keyword, count=100)
+            for tweet in tweets_for_keyword:
+                tweets.append(tweet)
+
+        return tweets
+    except Exception as e:
+        # Log error
+        logging.error(traceback.format_exc())
+
+def scrape_tweets_interface():
+    keywords_or_hashtags = input("Do you want to scrape keywords or hashtags? (Enter 'keywords' or 'hashtags'): ")
+
+    if keywords_or_hashtags not in ['keywords', 'hashtags']:
+        print("Invalid input. Exiting program.")
+        return
+
+    keywords = []
+    if keywords_or_hashtags == 'keywords':
+        keywords = input("Enter up to 10 keywords, separated by a comma: ").split(',')
+    else:
+        keywords = input("Enter up to 10 hashtags, separated by a comma: ").split(',')
+
+    # Call the existing scrape_tweets function with the given keywords or hashtags
+    tweets = scrape_tweets(keywords)
