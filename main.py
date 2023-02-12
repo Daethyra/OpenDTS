@@ -1,25 +1,27 @@
 # main.py
 
-import sentiment_analyzer
-import db_connector
 import logging
 import datetime
 import os
+from twtapiConn import authenticate_twitter_api
+from sentiment_analyzer import scrape_tweets, analyze_tweet
+import db_connector
 
 def main():
     # Configure logging
-    logging.basicConfig(filename='sentiment_analysis.log', level=logging.INFO,
+    log_filename = datetime.now().strftime("sentiment_analysis_%Y%m%d_%H%M%S.log")
+    logging.basicConfig(filename=log_filename, level=logging.INFO,
                         format='%(asctime)s:%(levelname)s:%(message)s')
-
+    
     # Check if the log file is older than 7 days
-    now = datetime.datetime.now()
+    now = datetime.now()
     log_file = "sentiment_analysis.log"
     file_created = datetime.datetime.fromtimestamp(os.path.getctime(log_file))
     days_old = (now - file_created).days
 
     # If the log file is older than 7 days, archive it and create a new one
     if days_old >= 7:
-        archive_log_file(log_file)
+        db_connector.archive_log_file(log_file)
         open(log_file, "w").close()
 
     while True:
@@ -36,11 +38,17 @@ def main():
                     # Get the keywords from the database
                     keywords = db_connector.get_keywords()
 
+                    # Connect to the Twitter API
+                    api = TwitterAPIConnection().connect_to_twitter_api()
+
                     # Scrape tweets using the keywords
-                    tweets = sentiment_analyzer.scrape_tweets(keywords)
+                    tweets = scrape_tweets(api, keywords)
 
                     # Analyze the sentiment of the tweets
-                    sentiment_results = sentiment_analyzer.analyze_sentiment(tweets)
+                    sentiment_results = []
+                    for tweet in tweets:
+                        sentiment = analyze_tweet(tweet)
+                        sentiment_results.append((tweet['username'], tweet['text'], sentiment))
 
                     # Update the sentiment analysis results in the database
                     db_connector.update_sentiment_results(sentiment_results)
@@ -62,16 +70,11 @@ def main():
                     logging.info("Keywords updated successfully.")
             except Exception as e:
                 logging.error("Error: {}".format(e), exc_info=True)
+                db_connector.log_exception(e)
         elif choice == '4':
             break
         else:
             print("Invalid choice. Please try again.")
 
-def archive_log_file(log_file):
-    # Create the archive filename
-    now = datetime.datetime.now()
-    archive_filename = "{}-{}-{}.log".format(log_file, now.year, now.month)
-
-    # Move the log file to the archive
-    os.rename(log_file, archive_filename)
-    logging.info("Log file archived as {}".format(archive_filename))
+if __name__ == '__main__':
+    main()
