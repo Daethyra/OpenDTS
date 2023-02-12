@@ -1,28 +1,16 @@
-# main.py
-
 import logging
-import datetime
-import os
 from twtapiConn import authenticate_twitter_api
-from sentiment_analyzer import scrape_tweets, analyze_tweet
+from sentiment_analyzer import analyze_tweet
 import db_connector
+
 
 def main():
     # Configure logging
-    log_filename = datetime.now().strftime("sentiment_analysis_%Y%m%d_%H%M%S.log")
-    logging.basicConfig(filename=log_filename, level=logging.INFO,
+    logging.basicConfig(filename=db_connector.get_log_filename(), level=logging.INFO,
                         format='%(asctime)s:%(levelname)s:%(message)s')
-    
-    # Check if the log file is older than 7 days
-    now = datetime.now()
-    log_file = "sentiment_analysis.log"
-    file_created = datetime.datetime.fromtimestamp(os.path.getctime(log_file))
-    days_old = (now - file_created).days
 
-    # If the log file is older than 7 days, archive it and create a new one
-    if days_old >= 7:
-        db_connector.archive_log_file(log_file)
-        open(log_file, "w").close()
+    # Check if the log file is older than 7 days
+    db_connector.archive_old_logs()
 
     while True:
         print("1. Scrape tweets and update sentiment analysis results")
@@ -39,16 +27,20 @@ def main():
                     keywords = db_connector.get_keywords()
 
                     # Connect to the Twitter API
-                    api = TwitterAPIConnection().connect_to_twitter_api()
+                    api = authenticate_twitter_api().connect_to_twitter_api()
 
                     # Scrape tweets using the keywords
-                    tweets = scrape_tweets(api, keywords)
+                    tweets = []
+                    for keyword in keywords:
+                        cursor = api.search(q=keyword, lang="en", tweet_mode="extended")
+                        for tweet in cursor:
+                            tweets.append(tweet)
 
                     # Analyze the sentiment of the tweets
                     sentiment_results = []
                     for tweet in tweets:
                         sentiment = analyze_tweet(tweet)
-                        sentiment_results.append((tweet['username'], tweet['text'], sentiment))
+                        sentiment_results.append((tweet.user.screen_name, tweet.full_text, sentiment))
 
                     # Update the sentiment analysis results in the database
                     db_connector.update_sentiment_results(sentiment_results)
@@ -61,12 +53,17 @@ def main():
                     print(sentiment_results)
                     logging.info("Sentiment analysis results retrieved successfully.")
                 elif choice == '3':
-                    # Get the updated keyword list from the user
-                    keywords = input("Enter the updated keyword list, separated by commas: ")
-                    keywords = keywords.split(',')
+                    # Get the current keywords from the database
+                    keywords = db_connector.get_keywords()
 
-                    # Update the keywords in the database
-                    db_connector.update_keywords(keywords)
+                    # Ask the user for new keywords
+                    new_keywords_str = input("Enter new keywords (comma-separated): ")
+
+                    # Add the new keywords to the database
+                    new_keywords = [k.strip() for k in new_keywords_str.split(",")]
+                    keywords += new_keywords
+                    db_connector.update_keywords(list(set(keywords)))
+
                     logging.info("Keywords updated successfully.")
             except Exception as e:
                 logging.error("Error: {}".format(e), exc_info=True)
@@ -75,6 +72,7 @@ def main():
             break
         else:
             print("Invalid choice. Please try again.")
+
 
 if __name__ == '__main__':
     main()

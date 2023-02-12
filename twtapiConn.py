@@ -1,5 +1,3 @@
-# twtapiConn.py
-
 import tweepy
 import logging
 import traceback

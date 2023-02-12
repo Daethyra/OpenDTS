@@ -5,9 +5,6 @@ import psycopg2
 import psycopg2.pool
 import os
 import dotenv
-import re
-import tempfile
-import shutil
 import zipfile
 from functools import lru_cache
 from datetime import datetime, timedelta
