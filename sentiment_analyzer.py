@@ -8,6 +8,7 @@ import db_connector
 from multiprocessing import Pool, cpu_count
 import twtapiConn
 import os
+import tweepy
 
 load_dotenv()
 
