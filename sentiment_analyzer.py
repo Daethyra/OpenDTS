@@ -1,54 +1,83 @@
-# `sentiment_analyzer.py`
+# sentiment_analyzer.py
 
-import os
-from dotenv import load_dotenv
-import vaderSentiment
-import tweepy
 import logging
 import traceback
-import pandas as pd
+import openai
+from dotenv import load_dotenv
+import db_connector
+from multiprocessing import Pool, cpu_count
+import twtapiConn
+import os
 
 load_dotenv()
 
-def scrape_tweets(keywords):
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def analyze_tweet(tweet):
     try:
-        # Authenticate to Twitter
-        auth = tweepy.OAuth1UserHandler(
-            os.getenv('CONSUMER_KEY'),
-            os.getenv('CONSUMER_SECRET'),
-            os.getenv('ACCESS_TOKEN'),
-            os.getenv('ACCESS_TOKEN_SECRET')
+        # Use OpenAI API to analyze the tweet's sentiment
+        response = openai.Completion.create(
+            engine="text-davinci-002",
+            prompt="Please provide a sentiment analysis for the following tweet: " + tweet.full_text,
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            temperature=0.5,
         )
+        sentiment = response["choices"][0]["text"]
 
-        # Create API object
-        api = tweepy.API(auth)
+        # Use OpenAI API to moderate the tweet's content
+        response = openai.Completion.create(
+            engine="content-moderation-001",
+            prompt=tweet.full_text,
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            temperature=0.5,
+        )
+        moderated_tweet = response["choices"][0]["text"]
 
+        # Store the sentiment analysis and moderation results
+        result = {"username": tweet.user.screen_name, "text": tweet.full_text, "sentiment": sentiment, "moderated_text": moderated_tweet}
+
+        logging.info(f"Sentiment for tweet '{tweet.full_text}' analyzed successfully.")
+        return result
+
+    except Exception as e:
+        # Log the error message and stack trace in case of any exceptions
+        logging.error(f"An error occurred while analyzing tweet sentiment: {e}")
+        logging.error(traceback.format_exc())
+
+def analyze_tweet_batch(tweets):
+    p = Pool(cpu_count())
+    results = p.map(analyze_tweet, tweets)
+    p.close()
+    p.join()
+    return [r for r in results if r]
+
+def scrape_tweets(api, keywords, batch_size=50):
+    try:
         # Initialize a list to store the tweets
         tweets = []
 
         # Scrape tweets using the keywords
         for keyword in keywords:
-            tweets_for_keyword = api.search(q=keyword, count=100)
-            for tweet in tweets_for_keyword:
-                tweets.append(tweet)
+            # Initialize cursor
+            cursor = tweepy.Cursor(api.search, q=keyword, lang="en", tweet_mode="extended", count=batch_size)
+
+            # Scrape tweets in batches
+            for i, tweet_batch in enumerate(cursor.pages()):
+                # Analyze sentiment for the tweet batch in parallel
+                results = analyze_tweet_batch(tweet_batch)
+
+                # Append the results to the list of tweets
+                tweets.extend(results)
+
+                logging.info(f"Scraped batch {i+1} of tweets for keyword '{keyword}' successfully.")
 
         return tweets
+
     except Exception as e:
         # Log error
         logging.error(traceback.format_exc())
-
-def scrape_tweets_interface():
-    keywords_or_hashtags = input("Do you want to scrape keywords or hashtags? (Enter 'keywords' or 'hashtags'): ")
-
-    if keywords_or_hashtags not in ['keywords', 'hashtags']:
-        print("Invalid input. Exiting program.")
-        return
-
-    keywords = []
-    if keywords_or_hashtags == 'keywords':
-        keywords = input("Enter up to 10 keywords, separated by a comma: ").split(',')
-    else:
-        keywords = input("Enter up to 10 hashtags, separated by a comma: ").split(',')
-
-    # Call the existing scrape_tweets function with the given keywords or hashtags
-    tweets = scrape_tweets(keywords)
+        raise e
