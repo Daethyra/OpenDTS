@@ -45,7 +45,7 @@ for filename in os.listdir('.'):
 results_df = pd.DataFrame(results, columns=['username', 'text', 'sentiment'])
 
 # Filter the results to include only tweets that mention the topic of interest
-topic = 'YOUR_TOPIC'
+topic = str(input())
 topic_results_df = results_df[results_df['text'].str.contains(topic)]
 
 # Calculate sentiment scores for the filtered results
