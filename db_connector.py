@@ -6,12 +6,22 @@ import psycopg2.pool
 import os
 import dotenv
 import zipfile
-from functools import lru_cache
 from datetime import datetime, timedelta
+from word_processor import is_word_valid
 
 dotenv.load_dotenv()
 
 ARCHIVE_FOLDER = 'archive'
+
+
+def get_log_filename():
+    return f"{datetime.now().strftime('%Y-%m-%d')}.log"
+
+
+def log_exception(e):
+    logging.error(f"An error occurred: {e}")
+    logging.error(traceback.format_exc())
+
 
 def connect_to_db():
     try:
@@ -64,4 +74,101 @@ def connect_to_db():
         # Log error
         logging.error(f"An error occurred while connecting to the database: {e}")
         logging.error(traceback.format_exc())
+        raise e
+
+
+def archive_old_logs():
+    # Check the creation time of the log file
+    log_filename = get_log_filename()
+    if os.path.isfile(log_filename):
+        log_creation_time = datetime.fromtimestamp(os.path.getctime(log_filename))
+        threshold_time = datetime.now() - timedelta(days=7)
+
+        # If the log file was created more than 7 days ago, archive it
+        if log_creation_time < threshold_time:
+            # Create a zip file of the log file
+            archive_filename = f'{ARCHIVE_FOLDER}/{log_filename}.zip'
+            with zipfile.ZipFile(archive_filename, 'w', compression=zipfile.ZIP_DEFLATED) as zip:
+                zip.write(log_filename)
+
+            # Remove the original log file
+            os.remove(log_filename)
+
+
+def get_keywords():
+    try:
+        # Connect to the database
+        conn, execute, _ = connect_to_db()
+
+        # Retrieve the keywords from the database
+        execute('SELECT keyword FROM keywords')
+        result = execute('SELECT keyword FROM keywords')
+        keywords = [row[0] for row in result]
+
+        # Filter out any invalid keywords
+        valid_keywords = [keyword for keyword in keywords if is_word_valid(keyword)]
+
+        # Close the connection
+        conn.close()
+
+        return valid_keywords
+    except Exception as e:
+        # Log error
+        log_exception(e)
+        raise e
+
+
+def update_keywords(keywords):
+    try:
+        # Connect to the database
+        conn, execute, _ = connect_to_db()
+
+        # Delete the old keywords
+        execute('DELETE FROM keywords')
+
+        # Insert the new keywords
+        execute('INSERT INTO keywords (keyword) VALUES (%s)', [(k,) for k in keywords])
+
+        # Close the connection
+        conn.close()
+    except Exception as e:
+        # Log error
+        log_exception(e)
+        raise e
+
+
+def get_sentiment_results():
+    try:
+        # Connect to the database
+        conn, execute, _ = connect_to_db()
+
+        # Retrieve the sentiment analysis results from the database
+        execute('SELECT * FROM sentiment_results')
+        result = execute('SELECT * FROM sentiment_results')
+        df = pd.DataFrame(result, columns=['user', 'tweet', 'sentiment'])
+
+        # Close the connection
+        conn.close()
+
+        return df
+    except Exception as e:
+        # Log error
+        log_exception(e)
+        raise e
+
+
+def update_sentiment_results(sentiment_results):
+    try:
+        # Connect to the database
+        conn, execute, _ = connect_to_db()
+
+        # Insert the sentiment analysis results into the database
+        execute('INSERT INTO sentiment_results (user, tweet, sentiment) VALUES (%s, %s, %s)',
+                [(r[0], r[1], r[2]) for r in sentiment_results])
+
+        # Close the connection
+        conn.close()
+    except Exception as e:
+        # Log error
+        log_exception(e)
         raise e
