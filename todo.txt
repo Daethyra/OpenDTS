@@ -1,0 +1,22 @@
+ChatGPT:
+
+Depending on how the program is deployed, it could be possible to set up a separate process or job that periodically updates the list of keywords based on some external data source, such as a list of current events or trending topics. However, this is not part of the current implementation.
+----------
+
+
+OpenAI API:
+update models used (davinci, content-filter-alpha-1, etc.)
+------------
+
+
+
+
+sentiment_analyzer.py:
+"# Check if the tweet contains any toxic words"
+------------
+
+
+
+menu.py is not in use :shrug:
+---------------
+
