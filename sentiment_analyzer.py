@@ -4,6 +4,8 @@ import openai
 from dotenv import load_dotenv
 import db_connector
 import os
+from word_processor import generate_word_pattern_multiprocess
+import re
 
 load_dotenv()
 
@@ -47,15 +49,15 @@ def analyze_tweet(tweet):
 
 
 def analyze_tweet_batch(tweets):
-    with open("toxic_words.txt") as f:
-        toxic_words = [line.strip() for line in f]
-
+    toxic_words = db_connector.get_toxic_words()
+    patterns = generate_word_pattern_multiprocess(toxic_words)
+    
     results = []
     for tweet in tweets:
         # Check if the tweet contains any toxic words
         contains_toxic_words = False
-        for word in toxic_words:
-            if word in tweet:
+        for pattern in patterns:
+            if re.search(pattern, tweet, re.IGNORECASE):
                 contains_toxic_words = True
                 break
 
