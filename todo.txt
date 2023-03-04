@@ -1,22 +1,16 @@
-ChatGPT:
+# ChatGPT:
 
-Depending on how the program is deployed, it could be possible to set up a separate process or job that periodically updates the list of keywords based on some external data source, such as a list of current events or trending topics. However, this is not part of the current implementation.
+"Depending on how the program is deployed, it could be possible to set up a separate process or job that periodically updates the list of keywords based on some external data source, such as a list of current events or trending topics. However, this is not part of the current implementation."
+---
+NewsAPI
+--
+Create scraper, update db_connector.py to be callable by a real-time keyword update module. 
+Finally, update the sentiment_analyzer.py to call the keyword file that is updated every 3 minutes.
+--Requires extra temp files, and compression for space saving
+-Needs CLI menu to zip, read, and write to files directly
 ----------
 
 
-OpenAI API:
+word_processor.py / sentiment_analyzer.py -- OpenAI API:
 update models used (davinci, content-filter-alpha-1, etc.)
 ------------
-
-
-
-
-sentiment_analyzer.py:
-"# Check if the tweet contains any toxic words"
-------------
-
-
-
-menu.py is not in use :shrug:
----------------
-
