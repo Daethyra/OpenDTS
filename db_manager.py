@@ -1,5 +1,6 @@
 import sqlite3
 import itertools
+from datetime import datetime
 
 def init_db():
     conn = sqlite3.connect('sentiment_analysis.db')
@@ -16,12 +17,12 @@ def save_sentiment_results(conn, results):
 
 def print_db_results(conn):
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM results')
-    results = cursor.fetchall()
-    print("|{:^4}|{:^50}|{:^10}|{:^15}|".format("ID", "Text", "Sentiment", "Violence Intention"))
-    print("-" * 82)
-    for row in results:
-        print("|{:^4}|{:^50}|{:^10}|{:^15}|".format(row[0], row[1][:50], row[2], row[3]))
+    cursor.execute("SELECT * FROM sentiment_results;")
+    result = cursor.fetchall()
+    table = PrettyTable(["ID", "Text", "Sentiment", "Violent Intent", "User ID", "Flagged"])
+    for row in result:
+        table.add_row(row)
+    print(table)
 
 def flag_dangerous_users(usernames, tweets, violence_intentions, threshold):
     dangerous_users = []
@@ -33,3 +34,9 @@ def flag_dangerous_users(usernames, tweets, violence_intentions, threshold):
             dangerous_users.append(user)
     
     return dangerous_users
+
+def compress_old_results(conn, retention_period):
+    cursor = conn.cursor()
+    cutoff_date = datetime.now() - retention_period
+    cursor.execute('UPDATE results SET text = "Compressed" WHERE timestamp < ?', [cutoff_date])
+    conn.commit()
