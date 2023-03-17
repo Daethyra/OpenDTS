@@ -1,12 +1,15 @@
 import re
 import openai
-import os
 import multiprocessing
 import time
+import os
+from dotenv import load_dotenv
 
 RATE_LIMIT_SECONDS = 0.33
 
-openai.api_key = os.environ["OPENAI_API_KEY"]
+load_dotenv()
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def generate_word_pattern(word):
     if is_word_valid(word):

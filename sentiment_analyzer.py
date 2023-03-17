@@ -4,12 +4,26 @@ import openai
 from dotenv import load_dotenv
 import db_connector
 import os
-from word_processor import generate_word_pattern_multiprocess
 import re
+from word_processor import generate_word_pattern_multiprocess
 
 load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def calculate_toxicity(tweet):
+    with open("toxic_words.txt") as f:
+        toxic_words = [line.strip() for line in f]
+
+    patterns = generate_word_pattern_multiprocess(toxic_words)
+
+    matches = []
+    for pattern in patterns:
+        if pattern and re.search(pattern, tweet, re.IGNORECASE):
+            matches.append(pattern)
+
+    toxicity_score = len(matches) / len(patterns)
+    return toxicity_score
 
 
 def analyze_tweet(tweet):
@@ -49,28 +63,16 @@ def analyze_tweet(tweet):
 
 
 def analyze_tweet_batch(tweets):
-    toxic_words = db_connector.get_toxic_words()
-    patterns = generate_word_pattern_multiprocess(toxic_words)
-    
     results = []
     for tweet in tweets:
-        # Check if the tweet contains any toxic words
-        contains_toxic_words = False
-        for pattern in patterns:
-            if re.search(pattern, tweet, re.IGNORECASE):
-                contains_toxic_words = True
-                break
-
-        # If the tweet contains toxic words, skip sentiment analysis and moderation
-        if contains_toxic_words:
-            continue
+        # Calculate the toxicity score for the tweet
+        toxicity_score = calculate_toxicity(tweet)
 
         # Analyze sentiment for the tweet
-        result = analyze_tweet(tweet)
+        sentiment_result = analyze_tweet(tweet)
 
         # Append the result to the list of results
-        if result:
-            results.append(result)
+        results.append((sentiment_result['sentiment'], sentiment_result['moderated_text'], toxicity_score))
 
     return results
 
@@ -80,11 +82,11 @@ def analyze_tweets():
         # Get the tweets from the database
         tweets = db_connector.get_tweets()
 
-        # Analyze the sentiment of the tweets
-        sentiment_results = analyze_tweet_batch(tweets)
+        # Analyze the sentiment and toxicity of the tweets
+        results = analyze_tweet_batch(tweets)
 
-        # Update the sentiment analysis and moderation results in the database
-        db_connector.update_sentiment_results(sentiment_results)
+        # Update the sentiment analysis and toxicity rated results in the database
+        db_connector.update_sentiment_results(results)
         logging.info("Sentiment analysis results updated successfully.")
     except Exception as e:
         # Log the error message and stack trace in case of any exceptions
