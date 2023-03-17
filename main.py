@@ -1,35 +1,35 @@
-import os
-from dotenv import load_dotenv
-from news_twitter_scraper import get_news_headlines, get_tweets
-from sentiment_analyzer import preprocess_text, get_sentiment
-from db_manager import init_db, save_sentiment_results, print_db_results
+import sqlite3
+import itertools
 
-def predict_violence_intentions(sentiments):
-    # Implement your logic to predict the intention of violence based on sentiment analysis results
-    # For this example, we'll assume that any negative sentiment has the potential for violence
-    return ["Violent" if sentiment == "negative" else "Non-violent" for sentiment in sentiments]
+def init_db():
+    conn = sqlite3.connect('sentiment_analysis.db')
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS results
+                   (id INTEGER PRIMARY KEY AUTOINCREMENT, text TEXT, sentiment TEXT, violence_intention TEXT)''')
+    conn.commit()
+    return conn
 
-load_dotenv()
+def save_sentiment_results(conn, results):
+    cursor = conn.cursor()
+    cursor.executemany('INSERT INTO results (text, sentiment, violence_intention) VALUES (?, ?, ?)', results)
+    conn.commit()
 
-NEWSAPI_API_KEY = os.getenv("NEWSAPI_API_KEY")
-TWITTER_API_KEY = os.getenv("TWITTER_API_KEY")
-TWITTER_API_SECRET_KEY = os.getenv("TWITTER_API_SECRET_KEY")
-TWITTER_ACCESS_TOKEN = os.getenv("TWITTER_ACCESS_TOKEN")
-TWITTER_ACCESS_TOKEN_SECRET = os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-user_defined_threshold = int(os.getenv("USER_DEFINED_THRESHOLD"))
+def print_db_results(conn):
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM results')
+    results = cursor.fetchall()
+    print("|{:^4}|{:^50}|{:^10}|{:^15}|".format("ID", "Text", "Sentiment", "Violence Intention"))
+    print("-" * 82)
+    for row in results:
+        print("|{:^4}|{:^50}|{:^10}|{:^15}|".format(row[0], row[1][:50], row[2], row[3]))
 
-conn = init_db()
-headlines = get_news_headlines(NEWSAPI_API_KEY, 100_sources)
-tweets = get_tweets(TWITTER_API_KEY, TWITTER_API_SECRET_KEY, TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET, user_defined_threshold)
-
-texts = headlines + tweets
-preprocessed_texts = [preprocess_text(text) for text in texts]
-sentiments = [get_sentiment(OPENAI_API_KEY, text) for text in preprocessed_texts]
-violence_intentions = predict_violence_intentions(sentiments)
-
-results = list(zip(texts, sentiments, violence_intentions))
-save_sentiment_results(conn, results)
-
-print_db_results(conn)
-conn.close()
+def flag_dangerous_users(usernames, tweets, violence_intentions, threshold):
+    dangerous_users = []
+    tweet_violence_intentions = list(zip(usernames, tweets, violence_intentions))
+    
+    for user, grouped_tweets in itertools.groupby(sorted(tweet_violence_intentions, key=lambda x: x[0]), key=lambda x: x[0]):
+        violent_tweets = sum(1 for tweet in grouped_tweets if tweet[2] == "Violent")
+        if violent_tweets >= threshold:
+            dangerous_users.append(user)
+    
+    return dangerous_users
