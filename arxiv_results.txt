@@ -1,0 +1,194 @@
+Title: An analysis of replies to Trump's tweets
+Authors: Zijian An, Kenneth Joseph
+Summary: Donald Trump has tweeted thousands of times during his presidency. These
+public statements are an increasingly important way through which Trump
+communicates his political and personal views. A better understanding of the
+way the American public consumes and responds to these tweets is therefore
+critical. In the present work, we address both consumption of and response to
+Trump's tweets by studying replies to them on Twitter. With respect to
+response, we find that a small number of older, white, left-leaning, and female
+Americans are responsible for the vast majority of replies to Trump's tweets.
+These individuals also attend to a broader range of Trump's tweets than the
+rest of the individuals we study. With respect to consumption, we note that
+Trump's tweets are often viewed not in isolation, but rather in the context of
+a set of algorithmically-curated replies. These replies may therefore color the
+way Americans consume Trump's tweets. To this end, we find some evidence that
+Twitter accounts see replies in line with their political leanings. However, we
+show that this can be largely, although not entirely, attributed to the fact
+that Twitter is more likely to show replies by accounts a user follows. As a
+basis for comparison, all results for Trump are compared and contrasted with
+replies to Joe Biden's tweets.
+Link: http://arxiv.org/abs/2011.11688v1
+
+--------------------------------------------------------------------------------
+Title: Roots of Trumpism: Homophily and Social Feedback in Donald Trump Support
+  on Reddit
+Authors: Joan Massachs, Corrado Monti, Gianmarco De Francisci Morales, Francesco Bonchi
+Summary: We study the emergence of support for Donald Trump in Reddit's political
+discussion. With almost 800k subscribers, "r/The_Donald" is one of the largest
+communities on Reddit, and one of the main hubs for Trump supporters. It was
+created in 2015, shortly after Donald Trump began his presidential campaign. By
+using only data from 2012, we predict the likelihood of being a supporter of
+Donald Trump in 2016, the year of the last US presidential elections. To
+characterize the behavior of Trump supporters, we draw from three different
+sociological hypotheses: homophily, social influence, and social feedback. We
+operationalize each hypothesis as a set of features for each user, and train
+classifiers to predict their participation in r/The_Donald.
+  We find that homophily-based and social feedback-based features are the most
+predictive signals. Conversely, we do not observe a strong impact of social
+influence mechanisms. We also perform an introspection of the best-performing
+model to build a "persona" of the typical supporter of Donald Trump on Reddit.
+We find evidence that the most prominent traits include a predominance of
+masculine interests, a conservative and libertarian political leaning, and
+links with politically incorrect and conspiratorial content.
+Link: http://arxiv.org/abs/2005.01790v1
+
+--------------------------------------------------------------------------------
+Title: Of Hags and bitches. Ageist attitudes in 2016 presidential debate on
+  twitter
+Authors: Balcerzak Bartlomiej, Nielek Radoslaw
+Summary: In this article we present our exploratory research into the occurrence of
+ageist attitudes within the discussion related to the US 2016 presidential
+election. We use natural processing techniques to analyze the content tweets
+related to Hillary Clinton and Donald Trump. Content analysis shows that
+although ageist attitudes are scarce in the discussion, they are mostly focused
+on Hillary Clinton rather than Donald Trump. Also, ageist arguments against
+Donald Trump appear mostly as a reply to controversies connected with the
+health of Hillary Clinton.
+Link: http://arxiv.org/abs/1611.03616v1
+
+--------------------------------------------------------------------------------
+Title: Catching Fire via "Likes": Inferring Topic Preferences of Trump
+  Followers on Twitter
+Authors: Yu Wang, Jiebo Luo, Richard Niemi, Yuncheng Li, Tianran Hu
+Summary: In this paper, we propose a framework to infer the topic preferences of
+Donald Trump's followers on Twitter. We first use latent Dirichlet allocation
+(LDA) to derive the weighted mixture of topics for each Trump tweet. Then we
+use negative binomial regression to model the "likes," with the weights of each
+topic serving as explanatory variables. Our study shows that attacking
+Democrats such as President Obama and former Secretary of State Hillary Clinton
+earns Trump the most "likes." Our framework of inference is generalizable to
+the study of other politicians.
+Link: http://arxiv.org/abs/1603.03099v1
+
+--------------------------------------------------------------------------------
+Title: Will Sanders Supporters Jump Ship for Trump? Fine-grained Analysis of
+  Twitter Followers
+Authors: Yu Wang, Yang Feng, Xiyang Zhang, Richard Niemi, Jiebo Luo
+Summary: In this paper, we study the likelihood of Bernie Sanders supporters voting
+for Donald Trump instead of Hillary Clinton. Building from a unique time-series
+dataset of the three candidates' Twitter followers, which we make public here,
+we first study the proportion of Sanders followers who simultaneously follow
+Trump (but not Clinton) and how this evolves over time. Then we train a
+convolutional neural network to classify the gender of Sanders followers, and
+study whether men are more likely to jump ship for Trump than women. Our study
+shows that between March and May an increasing proportion of Sanders followers
+are following Trump (but not Clinton). The proportion of Sanders followers who
+follow Clinton but not Trump has actually decreased. Equally important, our
+study suggests that the jumping ship behavior will be affected by gender and
+that men are more likely to switch to Trump than women.
+Link: http://arxiv.org/abs/1605.09473v1
+
+--------------------------------------------------------------------------------
+Title: Online Political Discourse in the Trump Era
+Authors: Rishab Nithyanand, Brian Schaffner, Phillipa Gill
+Summary: We identify general trends in the (in)civility and complexity of political
+discussions occurring on Reddit between January 2007 and May 2017 -- a period
+spanning both terms of Barack Obama's presidency and the first 100 days of
+Donald Trump's presidency. We then investigate four factors that are frequently
+hypothesized as having contributed to the declining quality of American
+political discourse -- (1) the rising popularity of Donald Trump, (2)
+increasing polarization and negative partisanship, (3) the democratization of
+news media and the rise of fake news, and (4) merging of fringe groups into
+mainstream political discussions.
+Link: http://arxiv.org/abs/1711.05303v1
+
+--------------------------------------------------------------------------------
+Title: Political elections and uncertainty -Are BRICS markets equally exposed
+  to Trump's agenda?
+Authors: Jamal Bouoiyour, Refk Selmi
+Summary: There certainly is little or no doubt that politicians, sometimes consciously
+and sometimes not, exert a significant impact on stock markets. The evolving
+volatility over the Republican Donald Trump's surprise victory in the US
+presidential election is a perfect example when politicians, through announced
+policies, send signals to financial markets. The present paper seeks to address
+whether BRICS (Brazil, Russia, India, China and South Africa) stock markets
+equally vulnerable to Trump's plans. For this purpose, two methods were
+adopted. The first presents an event-study methodology based on regression
+estimation of abnormal returns. The second is based on vote intentions by
+integrating data from social media (Twitter), search queries (Google Trends)
+and public opinion polls. Our results robustly reveal that although some
+markets emerged losers, others took the opposite route. China took the biggest
+hit with Brazil, while the damage was much more limited for India and South
+Africa. These adverse responses can be explained by the Trump's
+neo-mercantilist attitude revolving around tearing up trade deals, instituting
+tariffs, and labeling China a "currency manipulator". However, Russia looks to
+be benefiting due to Trump's sympathetic attitude towards Vladimir Putin and
+expectations about the scaling down of sanctions imposed on Russia over its
+role in the conflict in Ukraine.
+Link: http://arxiv.org/abs/1701.02182v1
+
+--------------------------------------------------------------------------------
+Title: Ratioing the President: An exploration of public engagement with Obama
+  and Trump on Twitter
+Authors: Joshua R. Minot, Michael V. Arnold, Thayer Alshaabi, Christopher M. Danforth, Peter Sheridan Dodds
+Summary: The past decade has witnessed a marked increase in the use of social media by
+politicians, most notably exemplified by the 45th President of the United
+States (POTUS), Donald Trump. On Twitter, POTUS messages consistently attract
+high levels of engagement as measured by likes, retweets, and replies. Here, we
+quantify the balance of these activities, also known as "ratios", and study
+their dynamics as a proxy for collective political engagement in response to
+presidential communications. We find that raw activity counts increase during
+the period leading up to the 2016 election, accompanied by a regime change in
+the ratio of retweets-to-replies connected to the transition between
+campaigning and governing. For the Trump account, we find words related to fake
+news and the Mueller inquiry are more common in tweets with a high number of
+replies relative to retweets. Finally, we find that Barack Obama consistently
+received a higher retweet-to-reply ratio than Donald Trump. These results
+suggest Trump's Twitter posts are more often controversial and subject to
+enduring engagement as a given news cycle unfolds.
+Link: http://arxiv.org/abs/2006.03526v1
+
+--------------------------------------------------------------------------------
+Title: Voting with Feet: Who are Leaving Hillary Clinton and Donald Trump?
+Authors: Yu Wang, Yuncheng Li, Quanzeng You, Xiyang Zhang, Richard Niemi, Jiebo Luo
+Summary: From a crowded field with 17 candidates, Hillary Clinton and Donald Trump
+have emerged as the two front-runners in the 2016 U.S. presidential campaign.
+The two candidates each boast more than 5 million followers on Twitter, and at
+the same time both have witnessed hundreds of thousands of people leave their
+camps. In this paper we attempt to characterize individuals who have left
+Hillary Clinton and Donald Trump between September 2015 and March 2016.
+  Our study focuses on three dimensions of social demographics: social capital,
+gender, and age. Within each camp, we compare the characteristics of the
+current followers with former followers, i.e., individuals who have left since
+September 2015. We use the number of followers to measure social capital, and
+profile images to infer gender and age. For classifying gender, we train a
+convolutional neural network (CNN). For age, we use the Face++ API.
+  Our study shows that for both candidates followers with more social capital
+are more likely to leave (or switch camps). For both candidates females make up
+a larger presence among unfollowers than among current followers. Somewhat
+surprisingly, the effect is particularly pronounced for Clinton. Lastly,
+middle-aged individuals are more likely to leave Trump, and the young are more
+likely to leave Hillary Clinton.
+Link: http://arxiv.org/abs/1604.07103v2
+
+--------------------------------------------------------------------------------
+Title: Twitter's Agenda-Setting Role: A Study of Twitter Strategy for Political
+  Diversion
+Authors: Yuyang Chen, Xiaoyu Cui, Yunjie Song, Manli Wu
+Summary: This study verified the effectiveness of Donald Trump's Twitter campaign in
+guiding agen-da-setting and deflecting political risk and examined Trump's
+Twitter communication strategy and explores the communication effects of his
+tweet content during Covid-19 pandemic. We collected all tweets posted by Trump
+on the Twitter platform from January 1, 2020 to December 31, 2020.We used
+Ordinary Least Squares (OLS) regression analysis with a fixed effects model to
+analyze the existence of the Twitter strategy. The correlation between the
+number of con-firmed daily Covid-19 diagnoses and the number of particular
+thematic tweets was investigated using time series analysis. Empirical analysis
+revealed Twitter's strategy is used to divert public attention from negative
+Covid-19 reports during the epidemic, and it posts a powerful political
+communication effect on Twitter. However, findings suggest that Trump did not
+use false claims to divert political risk and shape public opinion.
+Link: http://arxiv.org/abs/2212.14672v1
+
+--------------------------------------------------------------------------------
