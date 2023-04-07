@@ -3,3 +3,5 @@ newsapi-python
 scholarly
 openai
 pika
+visualization
+dotenv

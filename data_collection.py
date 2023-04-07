@@ -1,17 +1,26 @@
 import tweepy
-from newsapi import NewsApiClient
-from config import TWITTER_API_KEY, TWITTER_API_SECRET_KEY, TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET, NEWS_API_KEY
+import requests
+from config import API_KEY_TWITTER, API_KEY_NEWSAPI
 
-# Set up Twitter API
-auth = tweepy.OAuthHandler(TWITTER_API_KEY, TWITTER_API_SECRET_KEY)
-auth.set_access_token(TWITTER_ACCESS_TOKEN, TWITTER_ACCESS_TOKEN_SECRET)
+# Initialize the Twitter API
+auth = tweepy.AppAuthHandler(API_KEY_TWITTER, API_KEY_TWITTER)
 api = tweepy.API(auth)
 
-# Set up NewsAPI
-newsapi = NewsApiClient(api_key=NEWS_API_KEY)
+def collect_twitter_data(query):
+    try:
+        tweets = api.search_tweets(query, count=100, lang='en', tweet_mode='extended')
+        return [{'text': tweet.full_text, 'id': tweet.id} for tweet in tweets]
+    except Exception as e:
+        print(f"Error in collect_twitter_data: {e}")
+        return []
 
-def collect_twitter_data(query, count=100):
-    return api.search(q=query, count=count, lang='en', tweet_mode='extended')
-
-def collect_news_data(query, from_date, to_date, page_size=100):
-    return newsapi.get_everything(q=query, from_param=from_date, to=to_date, language='en', sort_by='relevancy', page_size=page_size)
+def collect_news_data(query, from_date, to_date):
+    try:
+        url = f"https://newsapi.org/v2/everything?q={query}&from={from_date}&to={to_date}&apiKey={API_KEY_NEWSAPI}"
+        response = requests.get(url)
+        response.raise_for_status()
+        news_data = response.json()['articles']
+        return [{'text': article['title'], 'id': article['url']} for article in news_data]
+    except Exception as e:
+        print(f"Error in collect_news_data: {e}")
+        return []

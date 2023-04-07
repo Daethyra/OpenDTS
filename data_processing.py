@@ -1,14 +1,21 @@
-from message_queue import send_message
-from sentiment_analysis import analyze_sentiment
+import openai
+from functools import lru_cache
+from config import API_KEY_OPENAI
 
-def process_twitter_data(tweets):
-    for tweet in tweets:
-        sentiment = analyze_sentiment(tweet.full_text)
-        message = {'source': 'twitter', 'text': tweet.full_text, 'sentiment': sentiment}
-        send_message('data_processing', message)
+openai.api_key = API_KEY_OPENAI
 
-def process_news_data(articles):
-    for article in articles['articles']:
-        sentiment = analyze_sentiment(article['title'])
-        message = {'source': 'news', 'text': article['title'], 'sentiment': sentiment}
-        send_message('data_processing', message)
+@lru_cache(maxsize=256)
+def analyze_sentiment(text):
+    try:
+        response = openai.Completion.create(
+            model="gpt-3.5-turbo",
+            prompt=f"Sentiment analysis of the following text: \"{text}\". Is it positive, negative, or neutral?",
+            temperature=0.5,
+            max_tokens=10,
+            top_p=1
+        )
+        sentiment = response.choices[0].text.strip().lower()
+        return sentiment
+    except Exception as e:
+        print(f"Error in analyze_sentiment: {e}")
+        return "unknown"

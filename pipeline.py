@@ -1,28 +1,36 @@
+import message_queue
 from data_collection import collect_twitter_data, collect_news_data
-from data_processing import process_twitter_data, process_news_data
-from message_queue import receive_messages
-from data_storage import save_data
+from data_processing import analyze_sentiment
+from data_storage import create_db, store_data
+import time
 
+def input_query():
+    source = input("Enter the source (twitter or news): ").lower()
+    query = input("Enter the query: ")
 
-def get_user_input():
-    query = input("Enter the keywords to search for: ")
-    return query
+    if source == "news":
+        from_date = input("Enter the start date (YYYY-MM-DD): ")
+        to_date = input("Enter the end date (YYYY-MM-DD): ")
+        return {'source': source, 'query': query, 'from_date': from_date, 'to_date': to_date}
+    else:
+        return {'source': source, 'query': query}
 
 def main():
-   # Get User's input
-    query = get_user_input()
-   # Collect and process data
-    twitter_data = collect_twitter_data(query)
-    process_twitter_data(twitter_data)
+    create_db()
+    while True:
+        message = input_query()
+        process_message(message)
 
-    news_data = collect_news_data(query, '2020-01-01', '2023-12-31')
-    process_news_data(news_data)
-
-    # Consume processed messages from the queue
-    def handle_message(message):
-        save_data(message['source'], message['text'], message['sentiment'])
-
-    receive_messages('data_processing', handle_message)
-
-if __name__ == '__main__':
-    main()
+def process_message(message):
+    if message['source'] == 'twitter':
+        tweets = collect_twitter_data(message['query'])
+        for tweet in tweets:
+            sentiment = analyze_sentiment(tweet['text'])
+            is_dog_whistle = 1 if sentiment == 'negative' else 0
+            store_data('twitter', tweet['text'], sentiment, is_dog_whistle)
+    elif message['source'] == 'news':
+        news_articles = collect_news_data(message['query'], message['from_date'], message['to_date'])
+        for article in news_articles:
+            sentiment = analyze_sentiment(article['text'])
+            is_dog_whistle = 1 if sentiment == 'negative' else 0
+            store_data('news', article['text'], sentiment, is_dog_whistle)
