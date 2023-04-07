@@ -1,17 +1,13 @@
 import sqlite3
 
 def create_db():
-    conn = sqlite3.connect('sentiment_data.db')
-    c = conn.cursor()
-    c.execute('''CREATE TABLE IF NOT EXISTS data (source TEXT, text TEXT, sentiment REAL)''')
-    conn.commit()
-    conn.close()
+    with sqlite3.connect('sentiment_data.db') as conn:
+        c = conn.cursor()
+        c.execute('''CREATE TABLE IF NOT EXISTS data (source TEXT, text TEXT, sentiment TEXT, is_dog_whistle INTEGER)''')
+        conn.commit()
 
-def save_data(source, text, sentiment):
-    conn = sqlite3.connect('sentiment_data.db')
-    c = conn.cursor()
-    c.execute("INSERT INTO data (source, text, sentiment) VALUES (?, ?, ?)", (source, text, sentiment))
-    conn.commit()
-    conn.close()
-
-create_db()
+def store_data(source, text, sentiment, is_dog_whistle):
+    with sqlite3.connect('sentiment_data.db') as conn:
+        c = conn.cursor()
+        c.execute('INSERT INTO data VALUES (?, ?, ?, ?)', (source, text, sentiment, is_dog_whistle))
+        conn.commit()
