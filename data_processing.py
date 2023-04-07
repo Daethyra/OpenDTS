@@ -1,6 +1,10 @@
 import openai
-from functools import lru_cache
+import logging
 from config import API_KEY_OPENAI
+from functools import lru_cache
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 openai.api_key = API_KEY_OPENAI
 
@@ -15,7 +19,8 @@ def analyze_sentiment(text):
             top_p=1
         )
         sentiment = response.choices[0].text.strip().lower()
+        logger.info(f"Sentiment analysis result: {sentiment}")
         return sentiment
     except Exception as e:
-        print(f"Error in analyze_sentiment: {e}")
+        logger.error(f"Error in analyze_sentiment: {e}")
         return "unknown"
