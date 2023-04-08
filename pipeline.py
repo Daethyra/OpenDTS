@@ -3,6 +3,8 @@ from data_collection import collect_twitter_data, collect_news_data
 from data_processing import analyze_sentiment
 from data_storage import create_db, store_data
 import concurrent.futures
+from reddit_scraper import process_reddit_data
+
 
 def process_data(data):
     sentiment = analyze_sentiment(data['text'])
@@ -24,3 +26,4 @@ def process_message(message):
 if __name__ == "__main__":
     create_db()
     message_queue.receive_messages('sentiment_analysis', process_message)
+    process_reddit_data()
