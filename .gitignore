@@ -1,0 +1,9 @@
+.ignore
+
+venv*
+
+*iotix-wpcom-*
+
+openai-python*
+
+embeddings*

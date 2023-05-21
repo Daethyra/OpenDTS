@@ -1,7 +1,5 @@
-tweepy
-newsapi-python
-scholarly
+# tweepy
+# newsapi-python
 openai
-pika
-visualization
+pinecone
 dotenv
