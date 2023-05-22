@@ -66,13 +66,3 @@
         - When are embeddings created from Ada-002 in the module pipeline? How many times are embeddings requested for in a single 'cycle'
         - How would the embeddings be made use of?
 
-
-===
-[Task 1]
--Review and critique my roadmap.md file
-
-[Task 2]
--Provide programming decisions for the project and provide very specific Python code snippet examples
-
-[Task 3]
--Act as the lead developer in this project and provide a briefing on how we'll tackle this beast of a project.
