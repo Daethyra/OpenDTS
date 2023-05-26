@@ -1,68 +1,30 @@
-- GPT-4 "Completions" documentation: **https://platform.openai.com/docs/api-reference/chat/create**
+OpenDTS Project Roadmap
+Introduction
+Hello! I'm in the process of developing a project called OpenDTS. It's designed to identify and analyze potential extremist threats by processing various sources of data, with a focus on real-time Twitter data. My goal is to provide insights that can be used to better understand and mitigate these threats.
 
-# Choose target audience
-- Wealthier people who can pay for the subscription to gain insights over their local area 
-- Corporations?
-- Law enforcement
-- Developers who can make use of the API
-    - PaidServices: 
-    - API endpoint for developers to access the extremist data
-    - Offer extremist data package
-        - What's included?
-        - Fine tuned model
-          - trained on my local computer, then deployed to Azure
-            - is it possible to constantly update this model during runtime?
-        - Access to my embeddings index
-        - Access to list of "Red Flag" (keywords/phrases(how would this be accomplished in the first place? potentially infeasible?))
-===
-    - Free services:
-    - Templates:
-        - index
-          - landing page. will have a heat map(s) of geographically predicted domestic terror
-          - Access to current knowledge of threats to physical safety
-        - about
-        - 300s,400s,500s response pages
+Data Collection
+First things first, I need to collect the data. I'll be downloading and updating data links related to extremist activities periodically. This will ensure that my data is always up-to-date. Additionally, I'll be extracting real-time Twitter data using a tool called Tweepy. Twitter is a hotbed for live information, and I plan to make the most of it.
 
-===
+Data Preparation
+After collecting the data, I'll get it ready for analysis. This involves cleaning the data, organizing it, and encoding categorical data. It's like preparing ingredients for cooking, but in this case, I'm preparing the data for the 'main dish' - the machine learning models.
 
-- Formulate directory structure by describing what functionalities are required for the project, and then divide those into small modules of pseudocode.
-- 'Cyclic Self Updating'
-  - The program requires a locally fine-tuned model based on my extremist data
-  - Tweepy-filtered-stream data
-  - Extremist data links: 
-        {
-            https://github.com/CartographerLabs/Pinpoint
-            https://github.com/sjtuprog/fox-news-comments
-            https://github.com/FelisNigelus/WorstExtremistViolenceGlobalIncidentDatabase
-        }
+### Building and Training Models
+With the data prepared, it's time to build and train the machine learning models. These models will be designed to detect and verify potential threats. I'll use a tool called TensorFlow for this process. I'll also be updating the models regularly to make sure they keep up with the latest data trends.
 
-  - Available data:
-    - Pinecone index of embeddings from real-life examples of extremist domestic terror threats, actions, and manifestos. Plus early warning signs someone may show, known as "Red Flags" 
-      - Twitter is the primary source for real-time information on potential extremist threats, as increasingly, it is the young men going out and commiting mass murder #Links([**https://www.washingtonpost.com/education/interactive/school-shootings-database/**, **https://github.com/washingtonpost/data-school-shootings/blob/master/school-shootings-data.csv**])
-      - These embeddings will be used to process their comparison against incoming data for potential threats of, or declarations of, domestic terrorism
+### System Development
+Next, I'll build the overall system that ties everything together. This includes developing an API endpoint for developers to access the processed data. I'll also create a web application with a dynamic heatmap. This heatmap will visualize the predicted threats, giving users an intuitive understanding of the situation.
 
-===
+### Testing and Deployment
+Once everything's in place, I'll test the models and the system thoroughly. I'll be checking for accuracy, bias, and performance. I'll also conduct security audits to make sure the system is secure. Once I'm happy with everything, I'll deploy the fine-tuned models to Azure, a cloud platform, where they'll be processing potential threats of violence.
 
-# Preliminary actions
-- Use TensorFlow to train a fine-tuned clustering machine learning model on local device
-  - Train model on "shooter manifestos", bigotry Twitter accounts(Andy Ngo, ), Transcripts of Nick Fuentes' hateful videos
-  - Upload fine-tuned model to Azure for processing liklihood of committing violence
-  - Call model to process potential threats of violence 
-    - Then, update pertinent website heatmaps
-    - To address bias, we will supply jokes and sarcastic statements that actually do not show any intention of harm based on the context of the accounts' "Following" list and their top 3 replied to that would trick a model into producing biased results.
+### User Engagement
+I understand the importance of keeping users engaged. So, I'll develop strategies to keep users interested and involved. This could include regular updates, newsletters, or even creating a community where users can discuss relevant topics. I'll also introduce perks for long-term subscribers to encourage them to stick around.
 
-## Draft pseudocode input for GPT-4
-- What functionality can be taken from online resources?
-  - See: **https://docs.pinecone.io/docs/openai**
-  - See: **https://platform.openai.com/docs/api-reference/chat/create**
-    - What functionality goes in which modules? 
-    - What requests/data will be sent/pulled to/from Pinecone?
-      - *When* do we need to pull embeddings from the Pinecone index to assess potential threats of violence?
-        - Is this even required? How do we compare the incoming filtered streaming data from Twitter to assess potential threats of violence?
-    - How will OpenAI's API actually be useful?
-      - Fine tune the model:
-        - **https://platform.openai.com/docs/guides/fine-tuning**
-        - During which processes related to OpenAI (Ex. Will Ada-002 do all of the 'heavy lifting', or can GPT-4 be used to improve accuracy, or perhaps 3.5-turbo to save costs?)
-        - When are embeddings created from Ada-002 in the module pipeline? How many times are embeddings requested for in a single 'cycle'
-        - How would the embeddings be made use of?
+### Legal Compliance
+Given the sensitive nature of the data, it's crucial that I comply with all relevant data privacy laws. I'll make sure the platform is legal and respectful of everyone's privacy.
 
+## Maintenance and Future Planning
+Finally, I'll be monitoring the system regularly to ensure it's working as expected. I'll also update the models and system based on changes in the data and improvements in performance. And of course, I'll be planning for the long-term sustainability of the platform.
+
+By the end of this journey, OpenDTS will be a comprehensive platform that provides valuable insights into potential extremist threats. 
+*Whether you're a developer, a potential user, or just someone interested in what I'm doing, I hope this gives you a good understanding of the project!*
