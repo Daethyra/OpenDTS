@@ -1,0 +1,11 @@
+.ignore
+
+venv*
+
+*iotix-wpcom-*
+
+openai-python*
+
+embeddings*
+
+PREP_QUESTIONS.txt
