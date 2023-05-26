@@ -30,5 +30,5 @@ By the end of this journey, OpenDTS will be a comprehensive platform that provid
 *Whether you're a developer, a potential user, or just someone interested in what I'm doing, I hope this gives you a good understanding of the project!*
 
 Also see:
-[readme](readme.md)
+[readme](readme.md);
 [breakdown](breakdown.md)
