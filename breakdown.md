@@ -17,5 +17,5 @@ The main goal of this project is to give communities early warnings about potent
 
 
 Also see:
-[readme](readme.md)
+[readme](readme.md);
 [roadmap](roadmap.md)
