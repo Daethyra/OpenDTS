@@ -14,3 +14,8 @@
 - Finally, there are plans to develop a dashboard that visually represents the data, making it easier to understand the potential threats.
 
 The main goal of this project is to give communities early warnings about potential violence, helping them prepare and protect themselves​1​.
+
+
+Also see:
+[readme](readme.md)
+[roadmap](roadmap.md)
