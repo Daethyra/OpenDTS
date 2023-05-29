@@ -28,4 +28,4 @@ For more information on how OpenDTS works, refer to the [system breakdown](break
 
 
 ### Please note:
-All releases are VERY OLD and only remain to share where the project has been, and how far it has come.
+All [releases](https://github.com/Daethyra/OpenDTS/releases) are VERY OLD and only remain to share where the project has been, and how far it has come.
