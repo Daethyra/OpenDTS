@@ -26,3 +26,6 @@ Given the sensitive nature of the data, OpenDTS complies with all relevant data 
 
 For more information on how OpenDTS works, refer to the [system breakdown](breakdown.md).
 
+
+### Please note:
+All releases are VERY OLD and only remain to share where the project has been, and how far it has come.
