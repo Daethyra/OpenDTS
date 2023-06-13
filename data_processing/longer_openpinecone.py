@@ -1,6 +1,7 @@
 # Import necessary libraries
 import os
 import logging
+import time
 from dotenv import load_dotenv
 import pinecone
 import tweepy
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 # Initialize OpenAI API
 openai.api_key = os.getenv('OPENAI_API_KEY')
+model_engine = "text-embeddings-ada-002"
 
 # Initialize Tweepy API
 auth = tweepy.OAuthHandler(os.getenv('TWITTER_CONSUMER_KEY'), os.getenv('TWITTER_CONSUMER_SECRET'))
@@ -24,13 +26,11 @@ auth.set_access_token(os.getenv('TWITTER_ACCESS_TOKEN'), os.getenv('TWITTER_ACCE
 api = tweepy.API(auth)
 
 # Initialize Pinecone
-pinecone.init(api_key=os.getenv('PINECONE_API_KEY'))
+pinecone.init(api_key=os.getenv('PINECONE_API_KEY', 'default_api_key')) 
 
 # Define Pinecone index name
-index_name = "combined-threat-index"
-
-# Define keywords/phrases associated with threats
-threat_keywords = ["keyword1", "keyword2", "..."]
+pinedex = os.getenv('PINECONE_INDEX', 'threat-embeddings')
+index = pinecone.Index(index_name=pinedex)
 
 # Define rate limit
 rate_limit = 3
@@ -39,17 +39,19 @@ rate_limit = 3
 pii_patterns = [
     '[0-9]{3}-[0-9]{2}-[0-9]{4}',  # SSN
     '[0-9]{3}-[0-9]{3}-[0-9]{4}',  # Phone number
-    '\S+@\S+',  # Email
-    '[A-Za-z0-9_ ]+'  # Twitter name
+    '\\S+@\\S+',  # Email
+    '[A-Za-z0-9_ ]+',  # Twitter name
     '@\\w+'  # Twitter username
     # Add more patterns as needed
 ]
 
-# Initialize combined Pinecone index
-combined_index = pinecone.Index(index_name=index_name)
+# Define Tweepy filtered-stream rules
+rules = [
+    {"value": "(LGBTQIA+ OR transgender OR gay OR lesbian) -has:links lang:en place.country_code:US -is:retweet (context:entities:(sentiment: negative OR sentiment: very_negative))", "tag": "LGBTQIA+"}
+]
 
 # Stream tweets in real-time
-class MyStreamListener(tweepy.StreamListener):
+class MyStreamListener(tweepy.StreamListener): # type: ignore
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.current_tweets = 0
@@ -64,13 +66,25 @@ class MyStreamListener(tweepy.StreamListener):
                 tweet_text = re.sub(pattern, '[REDACTED]', tweet_text)
 
             # Generate embedding for the tweet text
-            tweet_embedding = openai.Embedding.create(engine="text-embedding-ada-002", prompt=tweet_text)['data'][0]['embedding']
+            response = openai.Embedding.create(
+                model=model_engine,
+                texts=[tweet_text]
+            )
+            tweet_embedding = response['embeddings'][0]['embedding'] # type: ignore
 
-            # Upsert the tweet ID, vector embedding, and original text to combined Pinecone index
-            combined_index.upsert(vectors=[(status.id_str, tweet_embedding, {'text': tweet_text})])
+            # Ensure tweet_embedding is a list of floats
+            if isinstance(tweet_embedding, list) and all(isinstance(item, float) for item in tweet_embedding):
+                pass
+            elif isinstance(tweet_embedding, list) and all(isinstance(item, list) and len(item) == 1 and isinstance(item[0], float) for item in tweet_embedding):
+                tweet_embedding = [item[0] for item in tweet_embedding]
+            else:
+                raise ValueError("Unexpected format for tweet_embedding")
 
-            # Query combined Pinecone index for similar tweets
-            results = combined_index.query([tweet_embedding], top_k=5, include_metadata=True)
+            # Upsert the tweet ID, vector embedding, and original text to Pinecone index
+            index.upsert(vectors=[(status.id_str, tweet_embedding, {'text': tweet_text})])
+
+            # Query Pinecone index for similar tweets
+            results = index.query([tweet_embedding], top_k=5, include_metadata=True)  # type: ignore
 
             # Log potential threats
             for match in results['matches']:
@@ -79,16 +93,20 @@ class MyStreamListener(tweepy.StreamListener):
 
         except Exception as e:
             logger.error(f"Error processing tweet {status.id_str}: {e}")
-
+        
     def on_status(self, status):
         if self.current_tweets < rate_limit:
             self.current_tweets += 1
             asyncio.create_task(self.process_tweet(status))
         else:
             logger.info("Rate limit reached, waiting...")
+            # Sleep for 15 minutes
+            time.sleep(15 * 60)  
+            # Reset tweet count
+            self.current_tweets = 0  
 
 myStreamListener = MyStreamListener()
-myStream = tweepy.Stream(auth = api.auth, listener=myStreamListener)
+myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener) # type: ignore
 
 # Start streaming tweets
-myStream.filter(track=threat_keywords)
+myStream.filter(track=[rule['value'] for rule in rules])
