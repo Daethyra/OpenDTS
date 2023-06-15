@@ -1,5 +1,3 @@
-#!/bin/python
-
 # Import necessary libraries
 import os
 import logging

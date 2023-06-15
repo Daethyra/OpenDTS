@@ -1,5 +1,4 @@
 tweepy
-# newsapi-python // Planned to implement
 openai
 pinecone-client
-dotenv
+python-dotenv
