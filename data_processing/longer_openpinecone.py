@@ -1,3 +1,5 @@
+#!/bin/python
+
 # Import necessary libraries
 import os
 import logging
@@ -47,8 +49,21 @@ pii_patterns = [
 
 # Define Tweepy filtered-stream rules
 rules = [
-    {"value": "(LGBTQIA+ OR transgender OR gay OR lesbian) -has:links lang:en place.country_code:US -is:retweet (context:entities:(sentiment: negative OR sentiment: very_negative))", "tag": "LGBTQIA+"}
+    {
+        "value": "(LGBTQIA+ OR transgender OR gay OR lesbian OR bisexual OR queer OR intersex OR asexual OR genderfluid OR nonbinary) -has:links lang:en -is:retweet (context:entities:(sentiment: negative OR sentiment: very_negative))", 
+        "tag": "LGBTQIA+"
+    },
+    {
+        "value": "('Donald Trump' OR 'Matt Walsh' OR 'dont tread on me' OR 'MAGA' OR 'Second Amendment' OR 'QAnon' OR 'Proud Boys' OR 'Oath Keepers') -has:links lang:en -is:retweet (context:entities:(sentiment: negative OR sentiment: very_negative))", 
+        "tag": "Right-Wing Extremism"
+    },
+    {
+        "value": "('white power' OR 'white pride' OR 'white nationalism' OR 'white supremacy' OR 'Ku Klux Klan' OR 'neo-Nazi') -has:links lang:en -is:retweet (context:entities:(sentiment: positive OR sentiment: very_positive))", 
+        "tag": "Religious Extremism"
+    }
 ]
+
+
 
 # Stream tweets in real-time
 class MyStreamListener(tweepy.StreamListener): # type: ignore
