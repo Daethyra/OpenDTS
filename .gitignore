@@ -1,4 +1,5 @@
 # Ignore environment files
 *venv*
+
 *.env*
 

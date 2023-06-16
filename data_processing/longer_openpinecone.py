@@ -64,7 +64,7 @@ rules = [
 
 
 # Stream tweets in real-time
-class MyStreamListener(tweepy.StreamListener): # type: ignore
+class MyStreamListener(tweepy.Stream):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.current_tweets = 0
@@ -119,7 +119,7 @@ class MyStreamListener(tweepy.StreamListener): # type: ignore
             self.current_tweets = 0  
 
 myStreamListener = MyStreamListener()
-myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener) # type: ignore
+myStream = tweepy.Stream(auth=api.auth, listener=myStreamListener)
 
 # Start streaming tweets
-myStream.filter(track=[rule['value'] for rule in rules])
+myStream.filter(filter=[rule['value'] for rule in rules])
