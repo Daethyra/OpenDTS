@@ -2,5 +2,6 @@ tweepy
 openai
 pinecone-client
 python-dotenv
-presidio_analyzer
-presidio_anonymizer
+scrubadub
+requests
+asyncio

@@ -1,0 +1,47 @@
+# OpenDTS Big Picture
+
+OpenDTS is a Python script designed to monitor Twitter streams for potential threats or harmful content. It uses various libraries and services such as OpenAI, Pinecone, and Twitter API to achieve its functionality. Below is an overview of its components and functionalities:
+
+## Libraries and Services Used
+- `requests`: For making HTTP requests.
+- `json`: For parsing JSON data.
+- `datetime`: For working with dates and times.
+- `os`: For interacting with the operating system.
+- `logging`: For logging information and errors.
+- `asyncio`: For asynchronous programming.
+- `python-dotenv`: For loading environment variables from a `.env` file.
+- `pinecone`: For using Pinecone's vector database service.
+- `openai`: For using OpenAI's API to generate embeddings.
+- `scrubadub`: For redacting personally identifiable information (PII) from text.
+
+## Initialization
+- Environment variables are loaded from a `.env` file.
+- Logging is set up with a basic configuration.
+- OpenAI API is initialized with the API key from environment variables.
+- Pinecone is initialized with the API key from environment variables.
+
+## Twitter Stream Rules
+- The script communicates with the Twitter API to manage stream rules.
+- It can retrieve existing rules, check if rules are equal, set new rules, and delete all existing rules.
+- The rules are used to filter the Twitter stream for specific content.
+
+## Processing Tweets
+- The script listens to the Twitter stream and processes tweets asynchronously.
+- PII is redacted from the tweet text using `scrubadub`.
+- Embeddings are generated for the tweet text using OpenAI's API.
+- The tweet ID, vector embedding, and original text are upserted to a Pinecone index.
+- The Pinecone index is queried for similar tweets based on the embeddings.
+- Potential threats are logged if similarity scores exceed a certain threshold.
+
+## Main Function
+- The main function defines the rules for filtering the Twitter stream.
+- It initializes headers for the Twitter API using a bearer token from environment variables.
+- It retrieves existing rules, deletes them if they don't match the new rules, and sets the new rules.
+- It starts listening to the Twitter stream and processes tweets as they come in.
+
+## Execution
+- The script is executed as a standalone program and starts by calling the main function.
+
+## Note
+- The script is designed to be robust and logs errors if they occur during the processing of tweets.
+- It uses a combination of synchronous and asynchronous programming to efficiently process data streams.
