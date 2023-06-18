@@ -1,25 +1,35 @@
-### Collecting Information: 
-- The project gathers information about potential threats from sources like social media posts and news articles.
-- As data comes in, it automatically redacts all personally identifiable information before further processing.
+# OpenDTS System Breakdown
 
-### Analyzing the Information: 
-- It uses advanced techniques to analyze the sentiment of these texts, which helps identify possible threats of violence.
-- Information is passed through OpenAI, Pinecone, and a model made from scratch which is not included in the package at this time.
+OpenDTS (Domestic Threat Scanner) is designed to identify and analyze potential domestic terrorism threats in real-time. Here's how the system works:
 
-### Storing the Information: 
-- All of this information is then stored in a special kind of database, which is designed to handle a large amount of data and quickly access it when needed.
-- The information is easily accessible for further similarity queries.
+### Collecting Information:
 
-### Processing the Information: 
-- The project uses a system that can efficiently handle and process all of the incoming data.
-- All rate limit policies and privacy policies on all platforms interacted with are respected.
+- Gathers information about potential threats from sources like Twitter.
+- Automatically redacts all personally identifiable information (PII) using the `scrubadub` library before further processing.
 
-### Visualizing the Threats: 
-- Finally, there are plans to develop a dashboard that visually represents the data, making it easier to understand the potential threats.
+### Analyzing the Information:
 
-The main goal of this project is to give communities early warnings about potential violence, helping them prepare and protect themselves​1​.
+- Uses OpenAI's text embeddings model to generate embeddings for tweet text.
+- Analyzes the sentiment of these texts to identify possible threats of violence.
+- Passes information through OpenAI and Pinecone for analysis.
 
+### Storing the Information:
+
+- Stores tweet ID, vector embedding, and original text in a Pinecone index.
+- The database is designed to handle a large amount of data and quickly access it for similarity queries.
+
+### Processing the Information:
+
+- Efficiently handles and processes incoming data.
+- Respects rate limit policies and privacy policies on all platforms interacted with.
+- Queries Pinecone index for similar tweets and logs potential threats based on similarity scores.
+
+### Visualizing the Threats:
+
+- Plans to develop a dashboard that visually represents the data, making it easier to understand the potential threats.
+
+The main goal of OpenDTS is to provide communities with early warnings about potential violence, helping them prepare and protect themselves.
 
 Also see:
-[readme](readme.md);
-[roadmap](roadmap.md)
+- [Readme](readme.md)
+- [Roadmap](roadmap.md)
