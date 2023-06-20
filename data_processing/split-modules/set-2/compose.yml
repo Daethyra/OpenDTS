@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  preprocessor:
+    build:
+      context: .
+      dockerfile: Dockerfile_preprocessor
+    volumes:
+      - ./data:/app/data
+    environment:
+      - INPUT_FILE_PATH=/app/data/input.csv
+      - OUTPUT_FILE_PATH=/app/data/output.csv
+    networks:
+      - processing-network
+
+  clustering:
+    build:
+      context: .
+      dockerfile: Dockerfile_clustering
+    volumes:
+      - ./data:/app/data
+    environment:
+      - INPUT_FILE_PATH=/app/data/output.csv
+      - N_CLUSTERS=5
+    networks:
+      - processing-network
+    depends_on:
+      - preprocessor
+
+networks:
+  processing-network:
+    driver: bridge
