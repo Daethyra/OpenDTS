@@ -1,6 +1,22 @@
+---
 # OpenDTS: Real-Time Domestic Terrorism Threat Detector
 
-OpenDTS (Domestic Threat Scanner) is an advanced system designed to identify potential domestic terror threats online in real-time. It uses state-of-the-art techniques such as sentiment analysis and embeddings to predict if online posts, especially tweets, indicate an intention to commit mass harm.
+#### TLDR: It uses a multi-layered approach with techniques to predict if online posts, especially tweets, indicate an intention to commit mass harm.
+
+###### OpenDTS (Domestic Threat Scanner) is a project intended to designed to provide analytical insight into hostile sentiment towards user-defined minority demographics.
+
+---
+
+## Developer's Thoughts
+
+The application will do its best to accurately discern true intent to harm versus sarcasm, frustration without the intent to harm, and will make key decisions on multiple different layers comprised of entire models. Like the Ada-002 from OpenAI, for example. 
+
+Ideally, the first actual deployment will be a heatmap serving real-time processing data for whatever I choose. 
+
+- OpenDTS is the manifestation of my attempt to help others protect themselves
+- I want it to be a comprehensive open-source cyberspace threat-intelligence platform
+
+---
 
 ## Features
 
@@ -14,24 +30,31 @@ OpenDTS (Domestic Threat Scanner) is an advanced system designed to identify pot
 
 - **Data Visualization**: The project plans to develop a dynamic heatmap web application that visualizes the predicted threats, providing users an intuitive understanding of the situation.
 
-## Technology
-
-OpenDTS leverages OpenAI for generating embeddings and Pinecone for efficient data storage and retrieval. It uses the OpenAI's text embeddings model for sentiment analysis and anomaly detection. The system is designed to handle and process a large amount of data efficiently.
+--
 
 ## Roadmap
 
-OpenDTS aims to be a comprehensive platform for insights into potential extremist threats. The roadmap includes data collection, preparation, model building, system development, testing, deployment, user engagement, legal compliance, maintenance, and future planning. For more details, check the project's [roadmap](roadmap.md).
+The usage of OpenAI is intended to serve a comprehensive platform for cyberspace threat-intel. 
+
+The roadmap includes 
+1. data collection(✔),
+2. data sanitization,
+3. a TensorFlow module set for model building(✔),
+4. environment development(✔),
+5. testing,
+6. deployment,
+7. and finally to provide online services via web/mobile app and an API service for developers. 
+
+For more details, check the project's [roadmap](roadmap.md).
 
 ## Acknowledgements
 
-This project leverages technologies from OpenAI and Pinecone. The text embeddings model from OpenAI is used for sentiment analysis, and Pinecone is used for storing and accessing data efficiently.
+This project leverages technologies from OpenAI and Pinecone. The text embeddings model from OpenAI is used for sentiment analysis, and Pinecone is used for storing and accessing data efficiently. This project uses 'AI', or machine learning.
 
-## Developer's Note
+### Disclaimer
 
-This project reflects the developer's commitment to independent learning and self-taught skills in artificial intelligence and machine learning. It aims to provide insights that can be used to better understand and mitigate domestic terror threats. Feedback and contributions are welcome.
-
-## Disclaimer
-
-Given the sensitive nature of the data, OpenDTS complies with all relevant data privacy laws and is respectful of everyone's privacy.
+Given the sensitive nature of the data, OpenDTS does its best to remove all PII during preprocessing.
 
 For more information on how OpenDTS works, refer to the [system breakdown](breakdown.md).
+
+---
