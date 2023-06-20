@@ -1,0 +1,9 @@
+tensorflow
+transformers
+tokenizers
+numpy
+scikit-learn
+shap
+matplotlib
+flask
+transformers

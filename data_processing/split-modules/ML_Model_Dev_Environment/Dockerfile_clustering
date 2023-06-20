@@ -1,0 +1,18 @@
+# Use the latest TensorFlow Docker image as the base image
+FROM tensorflow/tensorflow:latest
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Copy the clustering Python script into the container
+COPY clustering.py /app/clustering.py
+
+# Install the required Python libraries
+RUN pip install --no-cache-dir numpy matplotlib scikit-learn
+
+# Define the entrypoint script
+ENTRYPOINT ["python", "/app/clustering.py"]
