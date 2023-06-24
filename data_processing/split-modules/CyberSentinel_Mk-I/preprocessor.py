@@ -1,8 +1,8 @@
 import argparse
 import logging
+import os
 import numpy as np
 import PyPDF2
-import os
 import tensorflow as tf
 
 logging.basicConfig(level=logging.INFO)
