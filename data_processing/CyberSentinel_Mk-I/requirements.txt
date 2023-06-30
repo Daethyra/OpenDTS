@@ -1,4 +1,0 @@
-numpy==1.22.0
-matplotlib==3.4.2
-tensorflow==2.11.1
-PyPDF2==1.27.5
