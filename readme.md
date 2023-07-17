@@ -1,4 +1,3 @@
----
 # OpenDTS: Real-Time Domestic Terrorism Threat Detector
 
 #### TLDR: It uses a multi-layered approach with techniques to predict if online posts, especially tweets, indicate an intention to commit mass harm.

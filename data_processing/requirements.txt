@@ -1,4 +1,0 @@
-pinecone-client
-pandas
-python-dotenv
-openai
