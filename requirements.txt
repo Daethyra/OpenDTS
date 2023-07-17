@@ -1,7 +1,8 @@
-tweepy
-openai
 pinecone-client
+pandas
 python-dotenv
-scrubadub
-requests
-asyncio
+openai
+langchain
+PyPDF2
+chardet
+xlrd
