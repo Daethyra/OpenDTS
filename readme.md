@@ -15,6 +15,8 @@ Ideally, the first actual deployment will be a heatmap serving real-time process
 - OpenDTS is the manifestation of my attempt to help others protect themselves
 - I want it to be a comprehensive open-source cyberspace threat-intelligence platform
 
+
+*All information below is outdated as of 7/17/23*
 ---
 
 ## Features
