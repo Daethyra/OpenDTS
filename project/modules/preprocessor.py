@@ -94,9 +94,19 @@ class FileProcessor:
         text = ' '.join(df.astype(str).values.flatten())
         return [text]
 
+    def save_to_csv(self, data, filename):
+        df = pd.DataFrame(data)
+        df.to_csv(filename, index=False)
+
+    def load_from_csv(self, filename):
+        return pd.read_csv(filename)
+
+    def process_and_save(self, filename):
+        data = self.process_files()
+        self.save_to_csv(data, filename)
 
 if __name__ == "__main__":
     script_directory = os.path.dirname(os.path.abspath(__file__))
     data_directory = os.path.join(script_directory, "../data")
     file_processor = FileProcessor(data_directory)
-    file_processor.process_files()
+    file_processor.process_and_save("processed_data.csv")

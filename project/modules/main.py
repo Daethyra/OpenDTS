@@ -2,7 +2,7 @@ import warnings
 import asyncio
 from modules.preprocessor import FileProcessor
 from modules.embeddings import send_embeddings_to_pinecone
-from modules.retry import retry_with_backoff
+from modules.retry_w_backoff import retry_with_backoff
 
 
 async def main():
