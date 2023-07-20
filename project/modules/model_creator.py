@@ -2,14 +2,15 @@ import os
 import tensorflow as tf
 import keras
 from tensorflow.keras import layers
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
 from sklearn.model_selection import train_test_split
 from preprocessor import FileProcessor
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
 
 class ModelTrainer:
     def __init__(self, data_directory):
         self.file_processor = FileProcessor(data_directory)
         self.data = self.file_processor.load_from_csv("processed_data.csv")
+        print(self.data.shape)
 
     def create_model(self):
         model = tf.keras.Sequential([
@@ -26,13 +27,7 @@ class ModelTrainer:
 
         return model
 
-    def train_model(self, model):
-        train_data, test_data, train_labels, test_labels = train_test_split(
-            self.data.iloc[:, :-1],
-            self.data.iloc[:, -1],
-            test_size=0.2
-        )
-
+    def train_model(self, model, train_data, train_labels, test_data, test_labels):
         early_stopping = EarlyStopping(monitor='val_loss', patience=3)
         model_checkpoint = ModelCheckpoint('best_model.h5', monitor='val_loss', save_best_only=True)
         tensorboard = TensorBoard(log_dir='logs')
@@ -55,7 +50,15 @@ class ModelTrainer:
 
     def train_and_save(self, filename):
         model = self.create_model()
-        self.train_model(model)
+
+        # Split the data into train and test sets
+        train_data, test_data, train_labels, test_labels = train_test_split(
+            self.data.iloc[:, :-1],
+            self.data.iloc[:, -1],
+            test_size=0.2
+        )
+
+        self.train_model(model, train_data, train_labels, test_data, test_labels)
         self.save_model(model, filename)
 
 if __name__ == "__main__":
