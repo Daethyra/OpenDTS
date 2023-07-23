@@ -1,0 +1,9 @@
+[submodule "project/modules/autogpt"]
+	path = project/modules/autogpt
+	url = https://github.com/Significant-Gravitas/Auto-GPT.git
+[submodule "project/modules/OpenAI-Utilikit"]
+	path = project/modules/OpenAI-Utilikit
+	url = https://github.com/Daethyra/OpenAI-Utilikit.git
+[submodule "project/modules/AutoThreader"]
+	path = project/modules/AutoThreader
+	url = https://github.com/Daethyra/AutoThreader.git
