@@ -33,6 +33,10 @@ Ideally, the first actual deployment will be a heatmap serving real-time process
 
 --
 
+## Installation
+
+`pip install -U -r requirements.txt`
+
 ## Roadmap
 
 The usage of OpenAI is intended to serve a comprehensive platform for cyberspace threat-intel. 

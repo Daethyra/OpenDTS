@@ -1,8 +1,8 @@
 import warnings
 import asyncio
-from modules.preprocessor import FileProcessor
-from modules.embeddings import send_embeddings_to_pinecone
-from modules.retry import retry_with_backoff
+from preprocessor import FileProcessor
+from embeddings import send_embeddings_to_pinecone
+from retry_w_backoff import retry_with_backoff
 
 
 async def main():
