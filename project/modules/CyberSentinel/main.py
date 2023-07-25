@@ -10,7 +10,7 @@ async def main():
     Main function that loads data, processes it, and sends embeddings to Pinecone.
     """
     # Set data directory path
-    data_directory = "../data/"
+    data_directory = "../../data/" # CONFIGURE ME !
 
     # Set batch limit for processing
     batch_limit = 100

@@ -69,7 +69,7 @@ async def send_embeddings_to_pinecone_async(data_directory, batch_limit=100):
 
 if __name__ == "__main__":
     # Load data
-    data_directory = '../data'
+    data_directory = '../../data'
     # Run the main function
     asyncio.run(send_embeddings_to_pinecone_async(data_directory))
     # Close the aiohttp session

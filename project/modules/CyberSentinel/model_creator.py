@@ -63,6 +63,6 @@ class ModelTrainer:
 
 if __name__ == "__main__":
     script_directory = os.path.dirname(os.path.abspath(__file__))
-    data_directory = os.path.join(script_directory, "../data")
+    data_directory = os.path.join(script_directory, "../../data")
     model_trainer = ModelTrainer(data_directory)
     model_trainer.train_and_save("violence-indicator_model")

@@ -8,8 +8,6 @@ from tqdm import tqdm
 import joblib
 from PyPDF2 import PdfReader
 
-'''Tested and seemingly functional'''
-
 class FileProcessor:
     def __init__(self, data_directory):
         assert isinstance(data_directory, str), "data_directory must be a string"
@@ -141,7 +139,7 @@ class UnsupervisedModelTrainer:
 
 if __name__ == "__main__":
     script_directory = os.path.dirname(os.path.abspath(__file__))
-    data_directory = os.path.join(script_directory, "../data")
+    data_directory = os.path.join(script_directory, "../../data")
     file_processor = FileProcessor(data_directory)
     file_processor.process_and_save("processed_data.csv")
 
