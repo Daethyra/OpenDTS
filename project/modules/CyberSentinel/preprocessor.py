@@ -2,6 +2,11 @@ import os
 import logging
 import json
 import pandas as pd
+import re
+import string
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 from tqdm import tqdm
@@ -14,6 +19,7 @@ class FileProcessor:
         logging.basicConfig(filename='file_processing.log', level=logging.INFO,
                             format='%(asctime)s - %(levelname)s - %(message)s')
         self.data_directory = data_directory
+        self.lemmatizer = WordNetLemmatizer()
         logging.info('FileProcessor initialized.')
 
     def process_files(self):
@@ -31,8 +37,13 @@ class FileProcessor:
                 ):
                     logging.info(f'Ignoring file: {file_path}')
                     continue
-                text = self.process_file(file_path)
-                data.append({'text': text, 'file_path': file_path})
+                try:
+                    text = self.process_file(file_path)
+                    data.append({'text': text, 'file_path': file_path})
+                    logging.info(f'Successfully processed file: {file_path}')
+                except Exception as e:
+                    logging.error(f'Error processing {file_path}: {e}')
+                    continue
         logging.info('File processing completed.')
         return data
 
@@ -53,28 +64,29 @@ class FileProcessor:
                 return self.process_xls(file_path)
             else:
                 logging.warning(f'Unsupported file format: {file_path}')
+                return ''
         except Exception as e:
             logging.error(f'Error processing {file_path}: {e}')
-        return ''
+            return ''
 
     def process_pdf(self, file_path):
         logging.debug(f'Reading PDF file: {file_path}')
         with open(file_path, 'rb') as file:
             reader = PdfReader(file)
             text = '\n'.join(page.extract_text() for page in reader.pages)
-        return text
+        return self.clean_text(text)
 
     def process_csv(self, file_path, delimiter):
         logging.debug(f'Reading CSV file: {file_path}')
         df = pd.read_csv(file_path, encoding='utf-8', delimiter=delimiter, low_memory=False)
         text = ' '.join(df.astype(str).values.flatten())
-        return text
+        return self.clean_text(text)
 
     def process_txt(self, file_path):
         logging.debug(f'Reading TXT file: {file_path}')
         with open(file_path, 'r', encoding='utf-8') as file:
             text = file.read()
-        return text
+        return self.clean_text(text)
 
     def process_json(self, file_path):
         logging.debug(f'Reading JSON file: {file_path}')
@@ -87,13 +99,13 @@ class FileProcessor:
                     texts.append(text)
                 except json.JSONDecodeError as e:
                     logging.error(f'Error decoding JSON line in {file_path}: {e}')
-            return ' '.join(texts)
+            return self.clean_text(' '.join(texts))
 
     def process_xls(self, file_path):
         logging.debug(f'Reading XLS file: {file_path}')
         df = pd.read_excel(file_path)
         text = ' '.join(df.astype(str).values.flatten())
-        return text
+        return self.clean_text(text)
 
     def save_to_csv(self, data, filename):
         df = pd.DataFrame(data, columns=['text', 'file_path'])
@@ -104,12 +116,35 @@ class FileProcessor:
 
     def process_and_save(self, filename):
         texts = self.process_files()
+        # Check for duplicates
+        df = pd.DataFrame(texts)
+        duplicates = df[df.duplicated()]
+        if duplicates.shape[0] > 0:
+            logging.warning(f"Found {duplicates.shape[0]} duplicate records.")
+            df = df.drop_duplicates()
+        # Check for null values
+        if df.isnull().sum().sum() > 0:
+            logging.warning("Found null values, filling with empty strings.")
+            df = df.fillna("")
+        self.save_to_csv(df, filename)
 
-        # Create a DataFrame with 'texts' list and 'likely' column with a placeholder value
-        df = pd.DataFrame({'text': texts, 'likely': 'unknown'})
-
-        self.save_to_csv(df, filename)  # Save the DataFrame to CSV
-
+    def clean_text(self, text):
+        # Lowercase the text
+        text = text.lower()
+        # Remove URLs
+        text = re.sub(r"http\S+|www\S+|https\S+", '', text, flags=re.MULTILINE)
+        # Remove user @ references and '#' from text
+        text = re.sub(r'\@\w+|\#','', text)
+        # Remove punctuations
+        text = text.translate(str.maketrans('', '', string.punctuation))
+        # Remove stopwords
+        text_tokens = word_tokenize(text)
+        text = [word for word in text_tokens if word not in stopwords.words('english')]
+        # Lemmatize words
+        text = [self.lemmatizer.lemmatize(word) for word in text]
+        # Remove words with 2 or fewer letters
+        text = [word for word in text if len(word) > 2]
+        return text
 
 
 class UnsupervisedModelTrainer:
@@ -119,11 +154,9 @@ class UnsupervisedModelTrainer:
 
     def train_model(self):
         vectorizer = TfidfVectorizer()
-        X = vectorizer.fit_transform(self.data['text'])  # Use only the 'text' column for vectorization
-
+        X = vectorizer.fit_transform(self.data)  # Use only the 'text' column for vectorization
         model = KMeans(n_clusters=5, n_init=10)
         model.fit(X)
-
         return model
 
     def save_model(self, model, filename):
