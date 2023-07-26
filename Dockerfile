@@ -1,6 +1,6 @@
 # Use multi-stage build
 # First stage: Use the official Python image as the base image
-FROM python:3.9 as builder
+FROM python:3.11 as builder
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -21,7 +21,7 @@ RUN pip install --upgrade pip
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 # Second stage: Create the final image
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
