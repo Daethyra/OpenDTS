@@ -2,7 +2,6 @@ import asyncio
 import logging
 from typing import Callable, Awaitable
 
-
 async def retry_with_backoff(
     func: Callable[..., Awaitable],
     max_retries: int = 3,
@@ -24,8 +23,9 @@ async def retry_with_backoff(
             await func()
             break  # Success, no need to retry
         except Exception as e:
+            logging.error(f"An error occurred: {e}")
             if retry == max_retries - 1:
-                logging.error(f"Max retries exceeded: {e}")
+                logging.error(f"Max retries exceeded.")
                 break  # Max retries reached, give up
             delay = backoff_values[min(retry, len(backoff_values) - 1)]
             logging.warning(f"Retrying in {delay} seconds... ({retry + 1}/{max_retries})")

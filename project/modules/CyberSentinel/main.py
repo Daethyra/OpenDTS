@@ -19,7 +19,7 @@ async def main():
     file_processor = FileProcessor(data_directory)
 
     # Process the files and retrieve the processed data
-    data = await file_processor.process_files()
+    data = file_processor.process_files()
 
     # Split data into batches
     batched_data = [data[i:i + batch_limit] for i in range(0, len(data), batch_limit)]
