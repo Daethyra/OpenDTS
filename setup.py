@@ -1,1 +1,5 @@
-# should execute a compose file, to build the Dockerfile
+import os
+from project.modules.autogpt import main
+from project.modules.AutoThreader.threads_py import ThreadsAPI
+
+data = "../data"
