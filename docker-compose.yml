@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  opendts:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - ./:/app
+
+  threader:
+    build: 
+      context: ./project/modules/AutoThreader
+      dockerfile: Dockerfile
+      target: threader-${BUILD_TYPE} # Configurate your build type (-dev | -release)
+      args:
+        - BUILD_TYPE=release
+    env_file:
+      - .env # Ensure your variables have been set before running 'Docker-Compose'
+    environment:
+      - THREADS_USERNAME=${THREADS_USERNAME}
+      - THREADS_PASSWORD=${THREADS_PASSWORD}
+      - WEBHOOK_SECRET=${THREADS_WEBHOOK_SECRET}
+    volumes:
+      - ./project/modules/AutoThreader:/app
+      - ./project/modules/AutoThreader/docker-compose.yml:/app/docker-compose.yml:ro
+      - ./project/modules/AutoThreader/Dockerfile:/app/Dockerfile:ro
+
+  auto-gpt:
+    build: 
+      context: ./project/modules/AutoThreader
+      dockerfile: Dockerfile
+      target: auto-gpt-${BUILD_TYPE} # Configurate your build type (-dev | -release)
+      args:
+        - BUILD_TYPE=dev
+    env_file:
+      - .env
+    volumes:
+      - ./project/modules/AutoThreader:/app
+      - ./project/modules/AutoThreader/docker-compose.yml:/app/docker-compose.yml:ro
+      - ./project/modules/AutoThreader/Dockerfile:/app/Dockerfile:ro
+    profiles: ["exclude-from-up"]

@@ -2,11 +2,7 @@
 *.log
 logs
 staged-ideas
-
-
-
-
-======= GitHub's Python template
+======= GitHub's Python template =======
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
