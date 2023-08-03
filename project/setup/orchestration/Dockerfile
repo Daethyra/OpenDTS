@@ -39,6 +39,7 @@ COPY . /app
 # Create a non-root user and switch to it
 RUN adduser --disabled-password --gecos '' sentinel
 USER sentinel
+RUN mkdir -p /app/data && chown -R sentinel:sentinel /app/data
 RUN chown -R sentinel:sentinel /app/data
 
 # Make port 443 available to the world outside this container
