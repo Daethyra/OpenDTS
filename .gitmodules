@@ -1,6 +1,3 @@
-[submodule "project/modules/OpenAI-Utilikit"]
-	path = project/modules/OpenAI-Utilikit
-	url = https://github.com/Daethyra/OpenAI-Utilikit.git
 [submodule "project/modules/Auto-GPT"]
 	path = project/modules/Auto-GPT
 	url = https://github.com/Significant-Gravitas/Auto-GPT
