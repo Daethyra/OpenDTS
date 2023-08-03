@@ -19,10 +19,16 @@ e. test and evaluate CyberSentinel using techniques I learned from Google course
 6(2a). create similarity query functionality against Pinecone index
 6a(2b). create langchain for queries
 
-7. Study AutoGPT's web browser modules; see how adaptable/useful it'd be for this project
+7. Integrate CyberSentinel with OpenDTS' langchain features
+# Crucial questions:
+- What will orchestrate the langchain Chain calls? What LLM? Or, just how!?
+- How will the model be used? In what circumstances is it appropriate for the Master Agent to decide to run something against the CyberSentinel classification model? In what circumstances should I use similarity queries against Pinecone?
+
+8. Study AutoGPT's web browser modules; see how adaptable/useful it'd be for this project
 
 
-
+0x1. Update breakdown.md file
+0x2. Update readme.md file
 000x1. Create Dockerfile
 000x2. Create compose.yml
 000x3. Automate SetUp process by writing system-level commands in setup.py
