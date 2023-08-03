@@ -1,3 +1,7 @@
+"""
+Retry w/ exponential backoff | Tested and functional
+"""
+
 import asyncio
 import logging
 from typing import Callable, Awaitable

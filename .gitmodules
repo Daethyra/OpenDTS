@@ -1,9 +1,0 @@
-[submodule "project/modules/Auto-GPT"]
-	path = project/modules/Auto-GPT
-	url = https://github.com/Significant-Gravitas/Auto-GPT
-[submodule "project/modules/Multi-Hooker"]
-	path = project/modules/Multi-Hooker
-	url = https://github.com/Daethyra/Multi-hooker.git
-[submodule "project/modules/threads-py"]
-	path = project/modules/threads-py
-	url = https://github.com/daethyra/threads-py.git
