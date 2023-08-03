@@ -4,9 +4,6 @@
 [submodule "project/modules/Auto-GPT"]
 	path = project/modules/Auto-GPT
 	url = https://github.com/Significant-Gravitas/Auto-GPT
-[submodule "project/modules/AutoThreader/threads-py"]  ; <-- Place threads-py inside AutoThreader submodule
-	path = project/modules/AutoThreader/threads-py
-	url = https://github.com/daethyra/threads-py.git
 [submodule "project/modules/Multi-Hooker"]
 	path = project/modules/Multi-Hooker
 	url = https://github.com/Daethyra/Multi-hooker.git
