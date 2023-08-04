@@ -4,7 +4,7 @@ TLDR: This project uses a multi-layered approach to predict whether or not someo
 
 OpenDTS (Domestic Threat Scanner) is a project intended to provide analytical insight into hostile sentiment towards a given demographic experiencing discrimination.
 
-Users may create profiles to help them track sentiment towards one group(free plan).
+Users may create profiles to help them track sentiment towards one group.
 
 ---
 
