@@ -7,11 +7,11 @@
 #### - Overview -
 
 - Intention:
+
   - Identify the intention to commit violence based on hatred via binary classification
   - Fine tune OpenDTS' threat-intelligence decision making via similarity queries
-- Module status:
-  - ~`preprocessor.py` is in an unfinished state~
 - Functionality:
+
   1) Configure API keys
   2) Load, clean and split the data
   3) Tokenize
