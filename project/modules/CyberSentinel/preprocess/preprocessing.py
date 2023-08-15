@@ -1,7 +1,9 @@
 """ Defines functions for ingesting files, lemmatizes and removeing stop words, and tokenization. """
 
+from dotenv import load_dotenv
 import os
 import re
+import csv
 from PyPDF2 import PdfFileReader
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -13,8 +15,17 @@ from datetime import datetime
 nltk.download('wordnet')
 nltk.download('stopwords')
 
+# Point to the location of the .env file relative to the script's location
+env_path = os.path.join(os.path.dirname(__file__), '../../../.env')
+
+# Load the .env file
+load_dotenv(dotenv_path=env_path)
+
 class Preprocessor:
     def __init__(self):
+        default_temp_path = os.path.dirname(__file__)
+        self.input_file_path = os.getenv('INPUT_FILE_PATH')
+        self.output_file_path = os.getenv('PREPROCESSED_DATA_FILE_PATH', f"processed_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
         self.lemmatizer = WordNetLemmatizer()
         self.stop_words = set(stopwords.words('english'))
 
@@ -75,7 +86,7 @@ class Preprocessor:
 
     def save_processed_data(self, processed_data: List[str], file_type: str = "csv"):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        file_path = f"processed_data_{timestamp}.{file_type}"
+        file_path = os.getenv('PREPROCESSED_DATA_FILE_PATH', f"processed_data_{timestamp}.{file_type}")
         with open(file_path, 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(['text'])
@@ -85,6 +96,6 @@ class Preprocessor:
 
 if __name__ == "__main__":
     preprocessor = Preprocessor()
-    file_path = input("Enter the path to the file or '.' to process all PDF and TXT files in the current directory: ")
+    file_path = os.getenv('INPUT_FILE_PATH') or input("Enter the path to the file or '.' to process all PDF and TXT files in the current directory: ")
     processed_data = preprocessor.load_data(file_path)
     preprocessor.save_processed_data(processed_data)
