@@ -37,7 +37,7 @@ jobs:
       name: Build image
       uses: docker/build-push-action@v3
       with:
-        context: ./project/setup/orchestration/
+        context: ./
         build-args: BUILD_TYPE=${{ matrix.build-type }}
         tags: ${{ env.IMAGE_NAME }}
         load: true    # save to docker images
