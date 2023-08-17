@@ -1,0 +1,24 @@
+# Please see the documentation for all configuration options:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+version: 2
+updates:
+  # Enable version updates for multiple branches
+  - package-ecosystem: "pip" 
+    directory: "/"
+    schedule:
+      interval: "daily"
+      # Check for pip updates at 9am UTC
+      time: "09:00"
+      timezone: "America/Los_Angeles"
+    target-branch: "master"
+    versioning-strategy: auto
+    
+  - package-ecosystem: "pip" 
+    directory: "/"
+    schedule:
+      interval: "daily"
+      # Check for pip updates at 9am UTC
+      time: "09:00"
+      timezone: "America/Los_Angeles"
+    target-branch: "v1.5*"
+    versioning-strategy: auto
