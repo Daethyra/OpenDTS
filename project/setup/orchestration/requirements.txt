@@ -1,5 +1,0 @@
-scikit-learn
-tensorflow
-pandas
-PyPDF2
-nltk

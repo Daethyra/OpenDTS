@@ -1,9 +1,11 @@
-""" Defines functions for ingesting files, lemmatizes and removeing stop words, and tokenization. """
+""" Defines functions for ingesting files, lemmatizes and removing stop words, and tokenization. """
 
 from dotenv import load_dotenv
 import os
 import re
 import csv
+import chardet
+import logging
 from PyPDF2 import PdfFileReader
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -21,41 +23,48 @@ env_path = os.path.join(os.path.dirname(__file__), '../../../.env')
 # Load the .env file
 load_dotenv(dotenv_path=env_path)
 
+logging.basicConfig(filename='preprocessing_%Y%m%d_%H%M%S.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 class Preprocessor:
     def __init__(self):
-        default_temp_path = os.path.dirname(__file__)
         self.input_file_path = os.getenv('INPUT_FILE_PATH')
         self.output_file_path = os.getenv('PREPROCESSED_DATA_FILE_PATH', f"processed_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
         self.lemmatizer = WordNetLemmatizer()
         self.stop_words = set(stopwords.words('english'))
 
-    def read_pdf(self, file_path: str) -> str:
-        text = ''
+    def read_file(self, file_path: str, reader_func) -> str:
+        result = ''
         if file_path == '.':
-            pdf_files = [f for f in os.listdir() if os.path.isfile(f) and f.lower().endswith('.pdf')]
-            for pdf_file in pdf_files:
-                with open(pdf_file, 'rb') as file:
-                    pdf_reader = PdfFileReader(file)
-                    for page in range(pdf_reader.getNumPages()):
-                        text += pdf_reader.getPage(page).extractText()
+            for root, _, files in os.walk(file_path):
+                for file_name in files:
+                    full_path = os.path.join(root, file_name)
+                    result += self.read_with_detected_encoding(full_path, reader_func)
         else:
-            with open(file_path, 'rb') as file:
-                pdf_reader = PdfFileReader(file)
-                for page in range(pdf_reader.getNumPages()):
-                    text += pdf_reader.getPage(page).extractText()
+            result = self.read_with_detected_encoding(file_path, reader_func)
+        return result
+
+    def read_with_detected_encoding(self, file_path: str, reader_func) -> str:
+        with open(file_path, 'rb') as file:
+            rawdata = file.read()
+            result = chardet.detect(rawdata)
+            encoding = result['encoding']
+            file.seek(0)  # Reset the file pointer to the beginning
+            try:
+                text = reader_func(file, encoding)
+            except Exception as e:
+                logging.warning(f"Failed to process {file_path} with encoding {encoding}: {e}")
+                text = ''
         return text
 
-    def read_txt(self, file_path: str) -> List[str]:
-        lines = []
-        if file_path == '.':
-            txt_files = [f for f in os.listdir() if os.path.isfile(f) and f.lower().endswith('.txt')]
-            for txt_file in txt_files:
-                with open(txt_file, 'r', encoding='utf-8') as file:
-                    lines += file.readlines()
-        else:
-            with open(file_path, 'r', encoding='utf-8') as file:
-                lines = file.readlines()
-        return [line.strip() for line in lines if line.strip()]
+    def read_pdf(self, file, encoding: str) -> str:
+        text = ''
+        pdf_reader = PdfFileReader(file)
+        for page in range(pdf_reader.getNumPages()):
+            text += pdf_reader.getPage(page).extractText()
+        return text
+
+    def read_txt(self, file, encoding: str) -> List[str]:
+        return [line.strip() for line in file.read().decode(encoding).splitlines() if line.strip()]
 
     def preprocess_text_data(self, text: str) -> str:
         # Tokenization
@@ -70,14 +79,23 @@ class Preprocessor:
         tokenized_text = " ".join(tokens)
         return tokenized_text
 
-    def preprocess_txt_implicit_hate_comments(self, comments: List[str]) -> List[str]:
-        return [re.split(r':', comment, maxsplit=2)[-1] for comment in comments]
-
     def load_data(self, file_path: str) -> List[str]:
+        if not os.path.exists(file_path) and file_path != '.':
+            raise ValueError("File path does not exist.")
+        
         if file_path.lower().endswith('.pdf'):
-            raw_data = self.read_pdf(file_path)
+            raw_data = self.read_file(file_path, self.read_pdf)
         elif file_path.lower().endswith('.txt'):
-            raw_data = self.read_txt(file_path)
+            raw_data = self.read_file(file_path, self.read_txt)
+        elif os.path.isdir(file_path):
+            raw_data = ''
+            for root, _, files in os.walk(file_path):
+                for file_name in files:
+                    full_path = os.path.join(root, file_name)
+                    if full_path.lower().endswith('.pdf'):
+                        raw_data += self.read_pdf(full_path)
+                    elif full_path.lower().endswith('.txt'):
+                        raw_data += self.read_txt(full_path)
         else:
             raise ValueError("Unsupported file format.")
 
