@@ -12,6 +12,9 @@ from nltk.corpus import stopwords
 import nltk
 from typing import List
 from datetime import datetime
+from urllib.parse import urlparse
+import urllib.request
+import shutil
 
 # Downloading NLTK resources if not already present
 nltk.download('wordnet')
@@ -31,6 +34,22 @@ class Preprocessor:
         self.output_file_path = os.getenv('PREPROCESSED_DATA_FILE_PATH', f"processed_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
         self.lemmatizer = WordNetLemmatizer()
         self.stop_words = set(stopwords.words('english'))
+
+    def validate_input_path(self, file_path: str) -> str:
+        # Check if the file path is an HTTPS link
+        parsed_url = urlparse(file_path)
+        if parsed_url.scheme == "https":
+            # Download the file to a temporary location
+            temp_file_path = "temp_file"
+            with urllib.request.urlopen(file_path) as response, open(temp_file_path, 'wb') as out_file:
+                shutil.copyfileobj(response, out_file)
+            return temp_file_path
+
+        # Check if the file path exists, if not create the directories
+        if not os.path.exists(file_path) and file_path != '.':
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        return file_path
 
     def read_file(self, file_path: str, reader_func) -> str:
         result = ''
@@ -80,6 +99,7 @@ class Preprocessor:
         return tokenized_text
 
     def load_data(self, file_path: str) -> List[str]:
+        file_path = self.validate_input_path(file_path)
         if not os.path.exists(file_path) and file_path != '.':
             raise ValueError("File path does not exist.")
         
