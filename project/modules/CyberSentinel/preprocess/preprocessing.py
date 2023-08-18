@@ -6,6 +6,7 @@ import re
 import csv
 import chardet
 import logging
+from ..utilities.logging import *
 from PyPDF2 import PdfFileReader
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -21,12 +22,10 @@ nltk.download('wordnet')
 nltk.download('stopwords')
 
 # Point to the location of the .env file relative to the script's location
-env_path = os.path.join(os.path.dirname(__file__), '../../../.env')
+env_path = os.path.join(os.path.dirname(__file__), '../.env')
 
 # Load the .env file
 load_dotenv(dotenv_path=env_path)
-
-logging.basicConfig(filename='preprocessing_%Y%m%d_%H%M%S.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Preprocessor:
     def __init__(self):
@@ -35,7 +34,10 @@ class Preprocessor:
         self.lemmatizer = WordNetLemmatizer()
         self.stop_words = set(stopwords.words('english'))
 
-    def validate_input_path(self, file_path: str) -> str:
+    def validate_input_path(self, file_path: str = None) -> str:
+        if file_path is None:
+            file_path = '../training-data'  # Default path to target files in the training-data directory
+
         # Check if the file path is an HTTPS link
         parsed_url = urlparse(file_path)
         if parsed_url.scheme == "https":
@@ -75,11 +77,13 @@ class Preprocessor:
                 text = ''
         return text
 
-    def read_pdf(self, file, encoding: str) -> str:
+    def read_pdf(self, file) -> str:
         text = ''
         pdf_reader = PdfFileReader(file)
         for page in range(pdf_reader.getNumPages()):
-            text += pdf_reader.getPage(page).extractText()
+            page_text = pdf_reader.getPage(page).extractText()
+            encoding = chardet.detect(page_text.encode())['encoding']
+            text += page_text.decode(encoding)
         return text
 
     def read_txt(self, file, encoding: str) -> List[str]:
