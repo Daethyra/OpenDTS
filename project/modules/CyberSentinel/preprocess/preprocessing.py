@@ -1,21 +1,23 @@
 """ Defines functions for ingesting files, lemmatizes and removing stop words, and tokenization. """
 
-from dotenv import load_dotenv
+import csv
 import os
 import re
-import csv
-import chardet
-import logging
-from ..utilities.logging import *
-from PyPDF2 import PdfFileReader
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
-import nltk
-from typing import List
-from datetime import datetime
-from urllib.parse import urlparse
-import urllib.request
 import shutil
+import urllib.request
+from datetime import datetime
+from typing import List
+from urllib.parse import urlparse
+
+import chardet
+import nltk
+from dotenv import load_dotenv
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from PyPDF2 import PdfFileReader
+
+from utilities.logging import *
+
 
 # Downloading NLTK resources if not already present
 nltk.download('wordnet')
