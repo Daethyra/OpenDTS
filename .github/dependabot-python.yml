@@ -4,7 +4,7 @@ version: 2
 updates:
   # Enable version updates for multiple branches
   - package-ecosystem: "pip" 
-    directory: "/"
+    directory: "project/modules/orchestration"
     schedule:
       interval: "daily"
       # Check for pip updates at 9am UTC
@@ -14,7 +14,7 @@ updates:
     versioning-strategy: auto
     
   - package-ecosystem: "pip" 
-    directory: "/"
+    directory: "project/modules/orchestration"
     schedule:
       interval: "daily"
       # Check for pip updates at 9am UTC
