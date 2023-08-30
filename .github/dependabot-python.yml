@@ -16,7 +16,7 @@ updates:
   - package-ecosystem: "pip" 
     directory: "project/modules/orchestration"
     schedule:
-      interval: "daily"
+      interval: "weekly"
       # Check for pip updates at 9am UTC
       time: "09:00"
       timezone: "America/Los_Angeles"
