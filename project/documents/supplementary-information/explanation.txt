@@ -1,0 +1,2 @@
+These subdirectories contain contextual information for the project.
+- The AI may make use of everything inside 'supplementary-information/'
