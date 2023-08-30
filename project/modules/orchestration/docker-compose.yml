@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  opendts:
+    build:
+      context: ./project/setup/orchestration
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - ./:/app

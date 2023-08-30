@@ -1,0 +1,10 @@
+cython
+numpy
+chardet
+scikit-learn
+tensorflow-io-gcs-filesystem
+tensorflow
+pandas
+python-dotenv
+PyPDF2
+nltk

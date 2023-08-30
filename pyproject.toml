@@ -1,0 +1,29 @@
+[build-system]
+requires = ["poetry-core>=1.6.1"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "OpenDTS"
+version = "1.5.1"
+description = "Open Domestic Threat Scanner - LLM Threat-Intelligence"
+authors = ["Daethyra dev-daethyra@protonmail.com"]
+
+[tool.poetry.dependencies]
+python = ">3.9,<3.12.0"
+wheel = "^0.41.1"
+chardet = "^5.2.0"
+setuptools = "^60.0"
+numpy = "^1.25.2"
+cython = "^3.0.0"
+scikit-learn = "^1.3.0"
+tensorflow-io-gcs-filesystem = "^0.33.0"
+tensorflow = "^2.14.0rc0"
+pandas = "^2.0.3"
+python-dotenv = "^1.0.0"
+PyPDF2 = "^2.12.1"
+nltk = "^3.8.1"
+
+[tool.poetry.dev-dependencies]
+
+
+[tool.poetry.scripts]

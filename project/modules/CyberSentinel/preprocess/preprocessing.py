@@ -1,50 +1,95 @@
-""" Defines functions for ingesting files, lemmatizes and removeing stop words, and tokenization. """
+""" Defines functions for ingesting files, lemmatizes and removing stop words, and tokenization. """
 
+import csv
 import os
 import re
-from PyPDF2 import PdfFileReader
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
-import nltk
-from typing import List
+import shutil
+import urllib.request
 from datetime import datetime
+from typing import List
+from urllib.parse import urlparse
+
+import chardet
+import nltk
+from dotenv import load_dotenv
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from PyPDF2 import PdfFileReader
+
+from utilities.logging import *
+
 
 # Downloading NLTK resources if not already present
 nltk.download('wordnet')
 nltk.download('stopwords')
 
+# Point to the location of the .env file relative to the script's location
+env_path = os.path.join(os.path.dirname(__file__), '../.env')
+
+# Load the .env file
+load_dotenv(dotenv_path=env_path)
+
 class Preprocessor:
     def __init__(self):
+        self.input_file_path = os.getenv('INPUT_FILE_PATH')
+        self.output_file_path = os.getenv('PREPROCESSED_DATA_FILE_PATH', f"processed_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv")
         self.lemmatizer = WordNetLemmatizer()
         self.stop_words = set(stopwords.words('english'))
 
-    def read_pdf(self, file_path: str) -> str:
-        text = ''
+    def validate_input_path(self, file_path: str = None) -> str:
+        if file_path is None:
+            file_path = '../training-data'  # Default path to target files in the training-data directory
+
+        # Check if the file path is an HTTPS link
+        parsed_url = urlparse(file_path)
+        if parsed_url.scheme == "https":
+            # Download the file to a temporary location
+            temp_file_path = "temp_file"
+            with urllib.request.urlopen(file_path) as response, open(temp_file_path, 'wb') as out_file:
+                shutil.copyfileobj(response, out_file)
+            return temp_file_path
+
+        # Check if the file path exists, if not create the directories
+        if not os.path.exists(file_path) and file_path != '.':
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        return file_path
+
+    def read_file(self, file_path: str, reader_func) -> str:
+        result = ''
         if file_path == '.':
-            pdf_files = [f for f in os.listdir() if os.path.isfile(f) and f.lower().endswith('.pdf')]
-            for pdf_file in pdf_files:
-                with open(pdf_file, 'rb') as file:
-                    pdf_reader = PdfFileReader(file)
-                    for page in range(pdf_reader.getNumPages()):
-                        text += pdf_reader.getPage(page).extractText()
+            for root, _, files in os.walk(file_path):
+                for file_name in files:
+                    full_path = os.path.join(root, file_name)
+                    result += self.read_with_detected_encoding(full_path, reader_func)
         else:
-            with open(file_path, 'rb') as file:
-                pdf_reader = PdfFileReader(file)
-                for page in range(pdf_reader.getNumPages()):
-                    text += pdf_reader.getPage(page).extractText()
+            result = self.read_with_detected_encoding(file_path, reader_func)
+        return result
+
+    def read_with_detected_encoding(self, file_path: str, reader_func) -> str:
+        with open(file_path, 'rb') as file:
+            rawdata = file.read()
+            result = chardet.detect(rawdata)
+            encoding = result['encoding']
+            file.seek(0)  # Reset the file pointer to the beginning
+            try:
+                text = reader_func(file, encoding)
+            except Exception as e:
+                logging.warning(f"Failed to process {file_path} with encoding {encoding}: {e}")
+                text = ''
         return text
 
-    def read_txt(self, file_path: str) -> List[str]:
-        lines = []
-        if file_path == '.':
-            txt_files = [f for f in os.listdir() if os.path.isfile(f) and f.lower().endswith('.txt')]
-            for txt_file in txt_files:
-                with open(txt_file, 'r', encoding='utf-8') as file:
-                    lines += file.readlines()
-        else:
-            with open(file_path, 'r', encoding='utf-8') as file:
-                lines = file.readlines()
-        return [line.strip() for line in lines if line.strip()]
+    def read_pdf(self, file) -> str:
+        text = ''
+        pdf_reader = PdfFileReader(file)
+        for page in range(pdf_reader.getNumPages()):
+            page_text = pdf_reader.getPage(page).extractText()
+            encoding = chardet.detect(page_text.encode())['encoding']
+            text += page_text.decode(encoding)
+        return text
+
+    def read_txt(self, file, encoding: str) -> List[str]:
+        return [line.strip() for line in file.read().decode(encoding).splitlines() if line.strip()]
 
     def preprocess_text_data(self, text: str) -> str:
         # Tokenization
@@ -59,14 +104,24 @@ class Preprocessor:
         tokenized_text = " ".join(tokens)
         return tokenized_text
 
-    def preprocess_txt_implicit_hate_comments(self, comments: List[str]) -> List[str]:
-        return [re.split(r':', comment, maxsplit=2)[-1] for comment in comments]
-
     def load_data(self, file_path: str) -> List[str]:
+        file_path = self.validate_input_path(file_path)
+        if not os.path.exists(file_path) and file_path != '.':
+            raise ValueError("File path does not exist.")
+        
         if file_path.lower().endswith('.pdf'):
-            raw_data = self.read_pdf(file_path)
+            raw_data = self.read_file(file_path, self.read_pdf)
         elif file_path.lower().endswith('.txt'):
-            raw_data = self.read_txt(file_path)
+            raw_data = self.read_file(file_path, self.read_txt)
+        elif os.path.isdir(file_path):
+            raw_data = ''
+            for root, _, files in os.walk(file_path):
+                for file_name in files:
+                    full_path = os.path.join(root, file_name)
+                    if full_path.lower().endswith('.pdf'):
+                        raw_data += self.read_pdf(full_path)
+                    elif full_path.lower().endswith('.txt'):
+                        raw_data += self.read_txt(full_path)
         else:
             raise ValueError("Unsupported file format.")
 
@@ -75,7 +130,7 @@ class Preprocessor:
 
     def save_processed_data(self, processed_data: List[str], file_type: str = "csv"):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        file_path = f"processed_data_{timestamp}.{file_type}"
+        file_path = os.getenv('PREPROCESSED_DATA_FILE_PATH', f"processed_data_{timestamp}.{file_type}")
         with open(file_path, 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerow(['text'])
@@ -85,6 +140,6 @@ class Preprocessor:
 
 if __name__ == "__main__":
     preprocessor = Preprocessor()
-    file_path = input("Enter the path to the file or '.' to process all PDF and TXT files in the current directory: ")
+    file_path = os.getenv('INPUT_FILE_PATH') or input("Enter the path to the file or '.' to process all PDF and TXT files in the current directory: ")
     processed_data = preprocessor.load_data(file_path)
     preprocessor.save_processed_data(processed_data)
