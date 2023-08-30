@@ -12,13 +12,13 @@
     versioning-strategy: auto
 
   # Enable version updates for Docker
-  - package-ecosystem: "docker"
-    # Look for a `Dockerfile` in the `root` directory
-    directory: "/project/modules/orchestration"
-    # Check for updates once a week
-    schedule:
-      interval: "daily"
-      # Check for npm updates at 9am UTC
-      time: "09:00"
-      timezone: "America/Los_Angeles"
-    target-branch: "master"
+#  - package-ecosystem: "docker"
+#    # Look for a `Dockerfile` in the `root` directory
+#    directory: "/project/modules/orchestration"
+#    # Check for updates once a week
+#    schedule:
+#      interval: "daily"
+#      # Check for npm updates at 9am UTC
+#      time: "09:00"
+#      timezone: "America/Los_Angeles"
+#    target-branch: "master"
