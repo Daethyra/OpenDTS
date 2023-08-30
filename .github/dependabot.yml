@@ -6,8 +6,8 @@ updates:
   - package-ecosystem: "pip" 
     directory: "/"
     schedule:
-      interval: "daily"
-      # Check for npm updates at 9am UTC
+      interval: "weekly"
+      # Check for pip updates at 9am UTC
       time: "09:00"
       timezone: "America/Los_Angeles"
     target-branch: "master"
@@ -17,21 +17,21 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-      # Check for npm updates at 9am UTC
+      # Check for pip updates at 9am UTC
       time: "09:00"
       timezone: "America/Los_Angeles"
-    target-branch: "v1.3.2"
+    target-branch: "v1.5*"
     versioning-strategy: auto
 
-  - package-ecosystem: "pip" 
-    directory: "/"
-    schedule:
-      interval: "daily"
-      # Check for npm updates at 9am UTC
-      time: "09:00"
-      timezone: "America/Los_Angeles"
-    target-branch: "v1.3.3"
-    versioning-strategy: auto
+#  - package-ecosystem: "pip" 
+#    directory: "/"
+#    schedule:
+#      interval: "daily"
+      # Check for pip updates at 9am UTC
+#      time: "09:00"
+#      timezone: "America/Los_Angeles"
+#    target-branch: "v1.3.3"
+#    versioning-strategy: auto
 
   
   # Enable version updates for npm
@@ -48,13 +48,13 @@ updates:
     versioning-strategy: auto
 
   # Enable version updates for Docker
-  - package-ecosystem: "docker"
+#  - package-ecosystem: "docker"
     # Look for a `Dockerfile` in the `root` directory
-    directory: "/"
+#    directory: "/"
     # Check for updates once a week
-    schedule:
-      interval: "daily"
+#    schedule:
+#      interval: "daily"
       # Check for npm updates at 9am UTC
-      time: "09:00"
-      timezone: "America/Los_Angeles"
-    target-branch: "master"
+#      time: "09:00"
+#      timezone: "America/Los_Angeles"
+#    target-branch: "master"
